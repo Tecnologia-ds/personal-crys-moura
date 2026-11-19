@@ -405,8 +405,46 @@
           <svg class="acc-chevron w-4 h-4 text-limefit shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </button>
         <div id="acc-treino" class="acc-body hidden border-t border-borderdark p-4 space-y-3 bg-panel/40">
+          <!-- Prescrição Estratégica de Treino (Personal Crys Moura) -->
+          <div id="ai-treino-box" class="bg-charcoal border border-limefit/40 rounded-xl p-4 space-y-3 shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-limefit/15 border border-limefit/40 text-limefit shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </span>
+                <div>
+                  <div class="font-display text-sm sm:text-base uppercase text-white tracking-wider">PRESCRIÇÃO DE TREINO <span class="text-limefit">• SEGUNDA A SEXTA</span></div>
+                  <div class="text-xs text-gray-300">Cálculo personalizado de volume, séries, repetições, cargas e grupos musculares pelo perfil do aluno</div>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end pt-1">
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-limefit mb-1.5">Nível de Experiência do Aluno</label>
+                <select id="inp-treino-nivel" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2.5 text-xs font-bold text-white focus:border-limefit focus:outline-none">
+                  <option value="iniciante">Iniciante (Adaptação • 2-3x séries)</option>
+                  <option value="moderado">Moderado (Intermediário • 3-4x séries)</option>
+                  <option value="avancado">Avançado (Alta Intensidade • 4-5x séries)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-300 mb-1.5">Foco / Objetivo Prioritário</label>
+                <select id="inp-treino-foco-ia" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2.5 text-xs font-semibold text-white focus:border-limefit focus:outline-none">
+                  <option value="auto">Automático (Perfil do Aluno)</option>
+                  <option value="hipertrofia">Hipertrofia Muscular</option>
+                  <option value="emagrecimento">Emagrecimento &amp; Definição</option>
+                  <option value="forca">Força &amp; Performance</option>
+                </select>
+              </div>
+              <button id="btn-gerar-treino-ia" type="button" class="w-full inline-flex items-center justify-center gap-2 bg-limefit hover:bg-limefitDark text-black font-display text-xs sm:text-sm font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-md transition shadow-lg">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <span>MONTAR TREINO COM CRYS</span>
+              </button>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div><label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Divisão / Frequência</label><input id="inp-treino-divisao" type="text" placeholder="Ex: Treino A/B/C/D • 4x semana" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-sm text-white focus:border-limefit focus:outline-none" /></div>
+            <div><label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Divisão / Frequência</label><input id="inp-treino-divisao" type="text" placeholder="Ex: Treino ABCDE • 5x semana (Seg a Sex)" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-sm text-white focus:border-limefit focus:outline-none" /></div>
             <div><label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Cardio / Aeróbico</label><input id="inp-treino-cardio" type="text" placeholder="Ex: 30 min esteira pós-treino" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-sm text-white focus:border-limefit focus:outline-none" /></div>
           </div>
           <div id="treino-days-list" class="space-y-2 pt-1"></div>
@@ -450,10 +488,48 @@
           <svg class="acc-chevron w-4 h-4 text-limefit shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </button>
         <div id="acc-alimentacao" class="acc-body hidden border-t border-borderdark p-4 space-y-3 bg-panel/40">
+          <!-- Prescrição Estratégica de Alimentação (Personal Crys Moura) -->
+          <div id="ai-alim-box" class="bg-charcoal border border-limefit/40 rounded-xl p-4 space-y-3 shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-limefit/15 border border-limefit/40 text-limefit shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </span>
+                <div>
+                  <div class="font-display text-sm sm:text-base uppercase text-white tracking-wider">PRESCRIÇÃO DE ALIMENTAÇÃO <span class="text-limefit">• PLANO COMPLETO</span></div>
+                  <div class="text-xs text-gray-300">Calcula calorias, macros, hidratação e todas as refeições (Café da Manhã à Ceia) com quantidades exatas pelo objetivo e peso do aluno</div>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end pt-1">
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-limefit mb-1.5">Objetivo Nutricional</label>
+                <select id="inp-alim-obj-select" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2.5 text-xs font-bold text-white focus:border-limefit focus:outline-none">
+                  <option value="auto">Automático (Perfil do Aluno)</option>
+                  <option value="hipertrofia">Hipertrofia &amp; Ganho de Massa</option>
+                  <option value="emagrecimento">Emagrecimento &amp; Definição</option>
+                  <option value="recomposicao">Recomposição Corporal / Saúde</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-300 mb-1.5">Preferência / Estilo</label>
+                <select id="inp-alim-estilo" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2.5 text-xs font-semibold text-white focus:border-limefit focus:outline-none">
+                  <option value="padrao">Padrão Brasileiro (Prático &amp; Completo)</option>
+                  <option value="lowcarb">Controle de Carboidratos (Low/Mod Carb)</option>
+                  <option value="economico">Econômico &amp; Dia a Dia</option>
+                </select>
+              </div>
+              <button id="btn-gerar-alim-crys" type="button" class="w-full inline-flex items-center justify-center gap-2 bg-limefit hover:bg-limefitDark text-black font-display text-xs sm:text-sm font-extrabold uppercase tracking-wider px-4 py-2.5 rounded-md transition shadow-lg">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <span>MONTAR DIETA COM CRYS</span>
+              </button>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div><label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Meta Calórica / Macros</label><input id="inp-alim-meta" type="text" placeholder="Ex: 2.200 kcal • 160g Prot" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-sm text-white focus:border-limefit focus:outline-none" /></div>
-            <div><label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Hidratação Diária</label><input id="inp-alim-agua" type="text" placeholder="Ex: 3,0 Litros/dia" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-sm text-white focus:border-limefit focus:outline-none" /></div>
-            <div><label class="block text-[11px] font-semibold uppercase text-gray-400 mb-1">Suplementação</label><input id="inp-alim-suplementos" type="text" placeholder="Ex: Whey, Creatina 5g..." class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-sm text-white focus:border-limefit focus:outline-none" /></div>
+            <div><label class="block text-[11px] font-bold uppercase tracking-wider text-limefit mb-1">Meta Calórica / Macros</label><input id="inp-alim-meta" type="text" placeholder="Ex: 2.200 kcal • 160g Prot" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-xs sm:text-sm font-bold text-white focus:border-limefit focus:outline-none" /></div>
+            <div><label class="block text-[11px] font-bold uppercase tracking-wider text-limefit mb-1">Hidratação Diária</label><input id="inp-alim-agua" type="text" placeholder="Ex: 3,0 Litros/dia" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-xs sm:text-sm font-bold text-white focus:border-limefit focus:outline-none" /></div>
+            <div><label class="block text-[11px] font-bold uppercase tracking-wider text-limefit mb-1">Suplementação</label><input id="inp-alim-suplementos" type="text" placeholder="Ex: Whey, Creatina 5g..." class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-xs sm:text-sm font-bold text-white focus:border-limefit focus:outline-none" /></div>
           </div>
           <div id="alim-meals-list" class="space-y-2 pt-1"></div>
           <div>
@@ -899,6 +975,149 @@
         }
       }
 
+
+      function generateAIWorkout(s, nivelInput, focoOverride) {
+        const nivel = nivelInput || (s.treino && s.treino.nivel) || 'iniciante';
+        const peso = parseFloat(s.peso) || 75;
+        const sexo = s.sexo || 'M';
+        const objRaw = (focoOverride && focoOverride !== 'auto') ? focoOverride : (s.objetivo || '').toLowerCase();
+        const isEmag = objRaw.includes('emagrec') || objRaw.includes('defin') || objRaw.includes('perda');
+        const isForca = objRaw.includes('forca') || objRaw.includes('força');
+        const lesoes = (s.lesoes || '').toLowerCase();
+        const temOmbro = lesoes.includes('ombro');
+        const temJoelho = lesoes.includes('joelho') || lesoes.includes('lombar');
+
+        // Multiplicadores de carga estimada baseada no peso corporal e nível
+        const mult = nivel === 'iniciante' ? 0.22 : (nivel === 'moderado' ? 0.38 : 0.55);
+        const carga = (fator) => {
+          const kg = Math.max(4, Math.round((peso * mult * fator) / 2) * 2);
+          return `${kg} kg`;
+        };
+
+        const cfg = {
+          iniciante: {
+            nomeNivel: 'Iniciante',
+            divisao: 'Treino ABCDE • 5x Semana (Seg a Sex • Adaptação & Base)',
+            cardio: isEmag
+              ? 'Esteira inclinada ou Bicicleta: 25 a 30 min pós-treino (Zona 2 • 60-70% FCmáx) • 5x/semana'
+              : 'Esteira ou Simulador de Escada: 15 a 20 min pós-treino (ritmo moderado) • 3x/semana',
+            repComp: isForca ? '3x10 (descanso 75s)' : (isEmag ? '3x15 (descanso 45s)' : '3x12 (descanso 60s)'),
+            repIso: isEmag ? '3x15 (descanso 40s)' : '3x12-15 (descanso 45s)',
+            core: '3x30s Prancha + 3x15 Abdominal Supra'
+          },
+          moderado: {
+            nomeNivel: 'Moderado',
+            divisao: 'Treino ABCDE • 5x Semana (Seg a Sex • Hipertrofia & Simetria)',
+            cardio: isEmag
+              ? 'Escada ou Esteira HIIT/Moderado: 30 a 35 min pós-treino (1 min forte / 1 min leve) • 5x/semana'
+              : 'Bicicleta ou Esteira: 20 a 25 min pós-treino (Zona 2) • 3-4x/semana',
+            repComp: isForca ? '4x6-8 (descanso 90s)' : (isEmag ? '4x12-15 (descanso 45s)' : '4x10-12 (descanso 60s)'),
+            repIso: isEmag ? '3x15 (descanso 40s)' : '3x12 (descanso 45s)',
+            core: '4x45s Prancha + 3x20 Abdominal Infra/Oblíquo'
+          },
+          avancado: {
+            nomeNivel: 'Avançado',
+            divisao: 'Treino ABCDE • 5x Semana (Seg a Sex • Alta Intensidade & Volume)',
+            cardio: isEmag
+              ? 'Simulador de Escada ou Corrida Intervalada: 35 a 40 min pós-treino (HIIT + Zona 2) • 5x/semana'
+              : 'Escada ou Esteira inclinada: 20 a 25 min pós-treino • 4x/semana',
+            repComp: isForca ? '5x5 (descanso 120s • RIR 1)' : (isEmag ? '4x12-15 + Drop-set final (descanso 45s)' : '4x8-10 + Rest-pause última série (descanso 75s)'),
+            repIso: isEmag ? '4x15 Bi-set (descanso 40s)' : '4x10-12 controle excêntrico 3s (descanso 50s)',
+            core: '4x60s Prancha com carga + 4x15 Elevação de pernas na barra'
+          }
+        }[nivel];
+
+        const dias = {
+          seg: {
+            foco: 'Peito & Tríceps',
+            exercicios: [
+              `1. ${temOmbro ? 'Supino Reto na Máquina (pegada neutra)' : 'Supino Reto com Barra ou Halteres'} — ${cfg.repComp} | Carga sug.: ${carga(1.1)}`,
+              `2. Supino Inclinado com Halteres (30°) — ${cfg.repComp} | Carga sug.: ${carga(0.85)}`,
+              `3. Crucifixo na Máquina (Peck Deck) ou Cross-over — ${cfg.repIso} | Carga sug.: ${carga(0.65)}`,
+              `4. ${nivel === 'iniciante' ? 'Flexão de Braços inclinada / solo' : 'Paralelas ou Supino Declinado'} — ${cfg.repIso}`,
+              `5. Tríceps Pulley Corda — ${cfg.repIso} | Carga sug.: ${carga(0.45)}`,
+              `6. ${temOmbro ? 'Tríceps Barra Reta no Cabo' : 'Tríceps Testa com Barra W ou Halteres'} — ${cfg.repIso} | Carga sug.: ${carga(0.4)}`,
+              `7. Core: ${cfg.core}`
+            ].join('\n')
+          },
+          ter: {
+            foco: 'Costas, Bíceps & Antebraço',
+            exercicios: [
+              `1. Puxada Frontal Aberta na Polia — ${cfg.repComp} | Carga sug.: ${carga(1.0)}`,
+              `2. ${temJoelho ? 'Remada Sentada na Máquina (apoio peitoral)' : 'Remada Curvada com Barra ou Cavalinho'} — ${cfg.repComp} | Carga sug.: ${carga(0.95)}`,
+              `3. Remada Unilateral com Halter (Serrote) — ${cfg.repComp} | Carga sug.: ${carga(0.55)}`,
+              `4. Pulldown com Corda na Polia Alta — ${cfg.repIso} | Carga sug.: ${carga(0.5)}`,
+              `5. Rosca Direta com Barra W ou Halteres — ${cfg.repIso} | Carga sug.: ${carga(0.45)}`,
+              `6. Rosca Martelo Alternada + Rosca Punho — ${cfg.repIso} | Carga sug.: ${carga(0.35)}`
+            ].join('\n')
+          },
+          qua: {
+            foco: 'Pernas Completo (Quadríceps, Posterior & Panturrilha)',
+            exercicios: [
+              `1. ${temJoelho ? 'Leg Press 45° (amplitude controlada)' : 'Agachamento Livre ou Guiado (Smith)'} — ${cfg.repComp} | Carga sug.: ${carga(1.5)}`,
+              `2. ${temJoelho ? 'Cadeira Extensora (isometria 2s no topo)' : 'Leg Press 45°'} — ${cfg.repComp} | Carga sug.: ${carga(1.8)}`,
+              `3. Cadeira Extensora — ${cfg.repIso} | Carga sug.: ${carga(0.85)}`,
+              `4. Mesa Flexora ou Cadeira Flexora — ${cfg.repComp} | Carga sug.: ${carga(0.75)}`,
+              `5. ${temJoelho ? 'Elevação Pélvica na Máquina / Barra' : 'Stiff com Halteres ou Barra'} — ${cfg.repComp} | Carga sug.: ${carga(0.95)}`,
+              `6. Panturrilha em Pé + Panturrilha Sentada — 4x15-20 (pausa 2s embaixo) | Carga sug.: ${carga(0.9)}`
+            ].join('\n')
+          },
+          qui: {
+            foco: 'Ombros Completo & Trapézio',
+            exercicios: [
+              `1. ${temOmbro ? 'Desenvolvimento Neutro na Máquina' : 'Desenvolvimento com Halteres Sentado'} — ${cfg.repComp} | Carga sug.: ${carga(0.6)}`,
+              `2. Elevação Lateral com Halteres — ${cfg.repIso} | Carga sug.: ${carga(0.22)}`,
+              `3. Elevação Lateral na Polia (unilateral) — ${cfg.repIso} | Carga sug.: ${carga(0.18)}`,
+              `4. Elevação Frontal com Corda ou Halter — ${cfg.repIso} | Carga sug.: ${carga(0.22)}`,
+              `5. Crucifixo Inverso (Peck Deck ou Halteres — Posterior de Ombro) — ${cfg.repIso} | Carga sug.: ${carga(0.4)}`,
+              `6. Encolhimento de Ombros com Halteres (Trapézio) — 4x12-15 | Carga sug.: ${carga(0.8)}`,
+              `7. Core: ${cfg.core}`
+            ].join('\n')
+          },
+          sex: {
+            foco: sexo === 'F' ? 'Glúteos, Posterior & Superiores Metabólico' : 'Full Body / Pontos Fracos (Braços, Peito/Costas & Pernas)',
+            exercicios: sexo === 'F' ? [
+              `1. Elevação Pélvica com Barra ou Máquina — ${cfg.repComp} | Carga sug.: ${carga(1.4)}`,
+              `2. Agachamento Búlgaro ou Afundo com Halteres — ${cfg.repComp} | Carga sug.: ${carga(0.5)}`,
+              `3. Cadeira Abdutora (tronco inclinado) — 4x15-20 | Carga sug.: ${carga(0.9)}`,
+              `4. Mesa Flexora Unilateral — ${cfg.repIso} | Carga sug.: ${carga(0.55)}`,
+              `5. Puxada Frontal + Supino Máquina (Bi-set Superiores) — 3x12-15 | Carga sug.: ${carga(0.75)}`,
+              `6. Panturrilha + Core: ${cfg.core}`
+            ].join('\n') : [
+              `1. Supino Inclinado na Máquina — ${cfg.repComp} | Carga sug.: ${carga(0.9)}`,
+              `2. Puxada Supinada ou Remada Baixa Triângulo — ${cfg.repComp} | Carga sug.: ${carga(0.9)}`,
+              `3. Agachamento Hack ou Passada com Halteres — ${cfg.repComp} | Carga sug.: ${carga(1.0)}`,
+              `4. Super-série: Rosca Scott + Tríceps Francês na Polia — ${cfg.repIso} | Carga sug.: ${carga(0.4)}`,
+              `5. Elevação Lateral + Face Pull (Saúde Escapular) — 3x15 | Carga sug.: ${carga(0.25)}`,
+              `6. Core: ${cfg.core}`
+            ].join('\n')
+          },
+          sab: {
+            foco: 'Descanso Ativo / Cardio Opcional',
+            exercicios: 'Caminhada leve, mobilidade articular (15 min) ou descanso total para recuperação muscular.'
+          },
+          dom: {
+            foco: 'Descanso Total',
+            exercicios: 'Recuperação completa, hidratação e sono regulado para próxima semana.'
+          }
+        };
+
+        return {
+          nivel,
+          divisao: cfg.divisao,
+          cardio: cfg.cardio,
+          dias
+        };
+      }
+
+      function autoResizeDayTextareas(scopeEl) {
+        const root = scopeEl || document;
+        root.querySelectorAll('textarea[data-day-field="exercicios"], textarea[data-meal-field="descricao"]').forEach(ta => {
+          ta.style.height = 'auto';
+          ta.style.height = Math.max(ta.scrollHeight + 4, 96) + 'px';
+        });
+      }
+
       function renderTreinoDays(s) {
         const container = document.getElementById('treino-days-list');
         if (!container) return;
@@ -906,30 +1125,147 @@
         container.innerHTML = '';
         TREINO_DAYS.forEach(d => {
           const entry = dias[d.key] || { foco: '', exercicios: '' };
+          const lineCount = Math.max(4, (entry.exercicios || '').split('\n').length + 1);
           const box = document.createElement('div');
           box.className = 'bg-charcoal border border-borderdark rounded-lg overflow-hidden';
           box.innerHTML = `
-            <button type="button" data-day-toggle="${d.key}" class="w-full px-3 py-2.5 flex items-center justify-between gap-2 text-left hover:bg-panel/60 transition">
-              <div class="flex items-center gap-2 min-w-0">
-                <span class="w-1.5 h-4 bg-limefit shrink-0"></span>
-                <span class="text-xs font-bold uppercase text-white">${d.label}</span>
-                <span data-day-preview="${d.key}" class="text-[11px] text-limefit truncate">${entry.foco || (entry.exercicios ? 'Treino preenchido' : 'Descanso / Clique para editar')}</span>
+            <button type="button" data-day-toggle="${d.key}" class="w-full px-3.5 py-3 flex items-center justify-between gap-2 text-left hover:bg-panel/60 transition">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-1.5 h-5 bg-limefit rounded-sm shrink-0"></span>
+                <span class="font-display text-xs sm:text-sm font-bold uppercase tracking-wider text-white">${d.label}</span>
+                <span data-day-preview="${d.key}" class="text-xs font-bold text-limefit truncate">${entry.foco || (entry.exercicios ? 'Treino preenchido' : 'Descanso / Clique para editar')}</span>
               </div>
               <svg class="day-chevron w-4 h-4 text-limefit transition-transform duration-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
-            <div id="day-body-${d.key}" class="hidden border-t border-borderdark p-3 space-y-2 bg-panel/30">
+            <div id="day-body-${d.key}" class="hidden border-t border-borderdark p-3.5 space-y-3 bg-panel/40">
               <div>
-                <label class="block text-[10px] font-semibold uppercase text-gray-400 mb-1">Foco / Grupo Muscular</label>
-                <input type="text" data-day-field="foco" data-day-key="${d.key}" value="${(entry.foco || '').replace(/"/g, '&quot;')}" placeholder="Ex: Peito, Ombro e Tríceps (ou Descanso)" class="w-full bg-panel border border-borderdark rounded-md px-2.5 py-1.5 text-xs text-white focus:border-limefit focus:outline-none" ${isStudentMode ? 'disabled' : ''} />
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-limefit mb-1">Foco / Grupo Muscular</label>
+                <input type="text" data-day-field="foco" data-day-key="${d.key}" value="${(entry.foco || '').replace(/"/g, '&quot;')}" placeholder="Ex: Peito, Ombro e Tríceps (ou Descanso)" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-xs sm:text-sm font-bold text-limefit focus:border-limefit focus:outline-none" ${isStudentMode ? 'disabled' : ''} />
               </div>
               <div>
-                <label class="block text-[10px] font-semibold uppercase text-gray-400 mb-1">Exercícios, Séries &amp; Repetições</label>
-                <textarea rows="3" data-day-field="exercicios" data-day-key="${d.key}" placeholder="Ex: Supino reto 4x10 • Desenvolvimento 3x12 • Tríceps corda 3x15..." class="w-full bg-panel border border-borderdark rounded-md px-2.5 py-1.5 text-xs text-white focus:border-limefit focus:outline-none" ${isStudentMode ? 'disabled' : ''}>${entry.exercicios || ''}</textarea>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-300 mb-1">Exercícios, Séries, Repetições &amp; Cargas</label>
+                <textarea rows="${lineCount}" data-day-field="exercicios" data-day-key="${d.key}" placeholder="Ex: Supino reto 4x10 • Desenvolvimento 3x12 • Tríceps corda 3x15..." class="w-full bg-panel border border-borderdark rounded-md px-3.5 py-2.5 text-xs sm:text-sm font-medium leading-loose tracking-wide text-gray-100 focus:border-limefit focus:outline-none overflow-hidden resize-none" ${isStudentMode ? 'disabled' : ''}>${entry.exercicios || ''}</textarea>
               </div>
             </div>
           `;
           container.appendChild(box);
         });
+      }
+
+      function generateCrysDiet(s, objSelect, estiloSelect) {
+        const calc = calcAll(s);
+        const peso = parseFloat(s.peso) || 75;
+        const sexo = s.sexo || 'M';
+        const objRaw = (objSelect && objSelect !== 'auto') ? objSelect : (s.objetivo || '').toLowerCase();
+        const isEmag = objRaw.includes('emagrec') || objRaw.includes('defin') || objRaw.includes('perda');
+        const isHiper = objRaw.includes('hipertrof') || objRaw.includes('massa') || objRaw.includes('ganho');
+        const objetivoFinal = isEmag ? 'emagrecimento' : (isHiper ? 'hipertrofia' : 'recomposicao');
+        const estilo = estiloSelect || 'padrao';
+
+        // Cálculo de calorias e macronutrientes baseado na TMB/GET e peso corporal
+        const baseGet = calc.get > 0 ? calc.get : (peso * (sexo === 'M' ? 31 : 28));
+        const kcalAlvo = Math.round((objetivoFinal === 'emagrecimento' ? baseGet * 0.80 : (objetivoFinal === 'hipertrofia' ? baseGet * 1.15 : baseGet)) / 10) * 10;
+        const protG = Math.round(peso * (objetivoFinal === 'emagrecimento' ? 2.2 : (objetivoFinal === 'hipertrofia' ? 2.0 : 1.9)));
+        const gordG = Math.round(peso * (objetivoFinal === 'emagrecimento' ? 0.75 : 0.9));
+        const carbG = Math.max(60, Math.round((kcalAlvo - (protG * 4 + gordG * 9)) / 4));
+        const aguaLitros = (peso * 0.04).toFixed(1).replace('.', ',');
+
+        // Porções escalonadas por objetivo e peso
+        const ovosQtd = objetivoFinal === 'hipertrofia' ? (sexo === 'M' ? '4 ovos inteiros' : '3 ovos inteiros') : (objetivoFinal === 'emagrecimento' ? '2 ovos inteiros + 2 claras' : '3 ovos inteiros');
+        const paoQtd = estilo === 'lowcarb' ? '1 fatia de pão integral (ou 40g de tapioca)' : (objetivoFinal === 'hipertrofia' ? '3 fatias de pão integral (ou 1 pão francês + 1 fatia)' : (objetivoFinal === 'emagrecimento' ? '2 fatias de pão 100% integral' : '2 fatias de pão integral'));
+        const aveiaG = objetivoFinal === 'hipertrofia' ? '40g de aveia em flocos' : (objetivoFinal === 'emagrecimento' ? '20g de aveia em flocos' : '30g de aveia em flocos');
+        const arrozAlmocoG = estilo === 'lowcarb' ? (objetivoFinal === 'hipertrofia' ? '120g de arroz integral' : '80g de arroz integral') : (objetivoFinal === 'hipertrofia' ? '220g de arroz branco/integral' : (objetivoFinal === 'emagrecimento' ? '110g de arroz integral' : '150g de arroz integral'));
+        const feijaoG = objetivoFinal === 'emagrecimento' ? '80g de feijão carioca/preto' : '120g de feijão carioca/preto';
+        const carneAlmocoG = objetivoFinal === 'hipertrofia' ? '180g de peito de frango grelhado, patinho moído ou tilápia' : (objetivoFinal === 'emagrecimento' ? '160g de peito de frango grelhado ou tilápia' : '150g de frango, carne magra ou peixe');
+        const arrozJantarG = estilo === 'lowcarb' ? 'Legumes assados à vontade (abobrinha, brócolis, cenoura)' : (objetivoFinal === 'hipertrofia' ? '180g de arroz ou 200g de batata-inglesa/mandioca' : (objetivoFinal === 'emagrecimento' ? '90g de arroz integral ou 120g de batata-doce' : '130g de arroz ou 150g de batata-doce'));
+        const carneJantarG = objetivoFinal === 'hipertrofia' ? '180g de carne magra, frango ou salmão/tilápia' : '150g de peito de frango, omelete (4 claras + 1 gema) ou tilápia';
+
+        const metaTxt = `${kcalAlvo} kcal • ${protG}g Prot • ${carbG}g Carb • ${gordG}g Gord`;
+        const aguaTxt = `${aguaLitros} Litros/dia (mínimo 500ml ao acordar e 500ml no treino)`;
+        const suplTxt = objetivoFinal === 'hipertrofia'
+          ? 'Creatina Monohidratada 5g/dia • Whey Protein Concentrado 30g pós-treino • Multivitamínico'
+          : (objetivoFinal === 'emagrecimento'
+            ? 'Whey Protein Isolado/Concentrado 30g • Creatina 5g/dia • Cafeína 150-200mg pré-treino (opcional)'
+            : 'Creatina 5g/dia • Whey Protein 30g (praticidade) • Ômega-3 2g/dia');
+
+        const cafeDescricao = estilo === 'economico' ? [
+          `• Proteína Base: ${ovosQtd} mexidos ou cozidos (fio mínimo de azeite ou antiaderente)`,
+          `• Carboidrato: ${paoQtd} + ${aveiaG}`,
+          `• Fruta & Fibras: 1 banana prata média (ou 1 fatia de mamão formosa) + 1 col. sopa de chia/linhaça`,
+          `• Bebida: 200ml de café preto sem açúcar (ou com adoçante) + 150ml de leite desnatado/semidesnatado`,
+          `• Substituição Rápida: Crepioca (2 ovos + 30g goma de tapioca + 30g queijo minas frescal) + 1 fruta`
+        ].join('\n') : [
+          `• Proteína Base: ${ovosQtd} mexidos (com orégano e cúrcuma) + 30g de queijo minas frescal ou cottage`,
+          `• Carboidrato Estratégico: ${paoQtd} + ${aveiaG}`,
+          `• Fruta & Micronutrientes: 1 banana prata (ou 150g de mamão/melão) + 10g de pasta de amendoim integral`,
+          `• Bebida: Café preto sem açúcar à vontade (ou 200ml de leite desnatado)`,
+          `• Opção 2 (Prática): Panqueca proteica (2 ovos + ${aveiaG} + 1 banana amassada + canela) + 15g de Whey`
+        ].join('\n');
+
+        const refeicoes = {
+          cafe: {
+            horario: `07:00 - 08:00 • Café da Manhã (${objetivoFinal === 'hipertrofia' ? 'Anabólico & Energético' : (objetivoFinal === 'emagrecimento' ? 'Alta Saciedade & Proteico' : 'Equilibrado')})`,
+            descricao: cafeDescricao
+          },
+          lanche1: {
+            horario: '10:00 - 10:30 • Lanche da Manhã',
+            descricao: objetivoFinal === 'hipertrofia'
+              ? `• 170g de iogurte natural desnatado ou grego zero + 25g de Whey Protein + ${aveiaG}\n• 1 maçã ou 10 morangos + 10g de castanhas-do-pará/caju`
+              : `• 1 iogurte natural desnatado (170g) + 15g de Whey Protein (ou 2 ovos cozidos)\n• 1 fruta média (maçã, pera ou kiwi) + 1 col. chá de chia`
+          },
+          almoco: {
+            horario: '12:30 - 13:30 • Almoço Principal',
+            descricao: [
+              `• Proteína: ${carneAlmocoG}`,
+              `• Carboidrato: ${arrozAlmocoG} + ${feijaoG}`,
+              `• Vegetais & Fibras: Salada crua variada à vontade (alface, rúcula, tomate, pepino) + 100g de legumes cozidos (brócolis, cenoura, abobrinha)`,
+              `• Gordura Boa: 1 colher de sopa (10ml) de azeite de oliva extra virgem sobre a salada`
+            ].join('\n')
+          },
+          lanche2: {
+            horario: '16:00 - 16:30 • Lanche da Tarde',
+            descricao: objetivoFinal === 'hipertrofia'
+              ? `• Sanduíche proteico: 2 fatias de pão integral + 120g de frango desfiado (ou atum ao natural) + 1 col. sopa de requeijão light\n• 1 copo (200ml) de suco natural ou 1 banana`
+              : `• 1 rap10 integral (ou 2 fatias de pão integral) com 100g de frango desfiado e tomate/alface\n• Ou 1 scoop (30g) de Whey Protein batido com 200ml de água + 1 fruta`
+          },
+          prepos: {
+            horario: 'Pré & Pós-Treino • Janela de Performance',
+            descricao: [
+              `• Pré-Treino (45-60 min antes): ${objetivoFinal === 'emagrecimento' ? '1 banana média + 15g de aveia + café preto sem açúcar' : '1 banana + 30g de aveia + 15g de mel (ou 2 fatias de pão com doce de leite 20g)'}`,
+              `• Pós-Treino (até 40 min após): 30g de Whey Protein com 250ml de água gelada + 5g de Creatina Monohidratada`
+            ].join('\n')
+          },
+          jantar: {
+            horario: '20:00 - 21:00 • Jantar',
+            descricao: [
+              `• Proteína: ${carneJantarG}`,
+              `• Carboidrato: ${arrozJantarG}`,
+              `• Salada & Legumes: Mix de folhas verdes + 1 fio de azeite extra virgem + limão e ervas naturais`
+            ].join('\n')
+          },
+          ceia: {
+            horario: '22:30 - 23:00 • Ceia (Recuperação Noturna)',
+            descricao: objetivoFinal === 'hipertrofia'
+              ? `• 170g de iogurte natural + 20g de Whey Protein (ou 3 ovos cozidos) + 15g de pasta de amendoim ou 3 castanhas`
+              : `• Chá calmante sem açúcar (camomila/mulungu) + 2 ovos cozidos (ou 150g de iogurte natural zero com canela)`
+          }
+        };
+
+        const obsTxt = objetivoFinal === 'emagrecimento'
+          ? '• Priorize proteínas em todas as refeições para preservar massa magra e controlar a fome.\n• Evite frituras, açúcares líquidos, álcool e ultraprocessados durante a semana.\n• Temperos liberados: alho, cebola, limão, orégano, páprica, cúrcuma e sal moderado.'
+          : (objetivoFinal === 'hipertrofia'
+            ? '• Não pule refeições: o superávit calórico limpo é essencial para construir massa muscular.\n• Beba água fracionada ao longo do dia (evite grandes volumes junto às refeições principais).\n• Consistência de 90% na semana garante evolução constante de carga e volume.'
+            : '• Mantenha regularidade nos horários das refeições e na ingestão diária de água.\n• Ajuste as porções conforme resposta semanal na balança e nas medidas.');
+
+        return {
+          objetivo: objetivoFinal,
+          estilo,
+          meta: metaTxt,
+          agua: aguaTxt,
+          suplementos: suplTxt,
+          obs: obsTxt,
+          refeicoes
+        };
       }
 
       function renderAlimMeals(s) {
@@ -939,25 +1275,26 @@
         container.innerHTML = '';
         ALIM_MEALS.forEach(m => {
           const entry = refeicoes[m.key] || { horario: '', descricao: '' };
+          const lineCount = Math.max(4, (entry.descricao || '').split('\n').length + 1);
           const box = document.createElement('div');
           box.className = 'bg-charcoal border border-borderdark rounded-lg overflow-hidden';
           box.innerHTML = `
-            <button type="button" data-meal-toggle="${m.key}" class="w-full px-3 py-2.5 flex items-center justify-between gap-2 text-left hover:bg-panel/60 transition">
-              <div class="flex items-center gap-2 min-w-0">
-                <span class="w-1.5 h-4 bg-limefit shrink-0"></span>
-                <span class="text-xs font-bold uppercase text-white">${m.label}</span>
-                <span data-meal-preview="${m.key}" class="text-[11px] text-limefit truncate">${entry.horario || (entry.descricao ? 'Refeição preenchida' : 'Clique para editar')}</span>
+            <button type="button" data-meal-toggle="${m.key}" class="w-full px-3.5 py-3 flex items-center justify-between gap-2 text-left hover:bg-panel/60 transition">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-1.5 h-5 bg-limefit rounded-sm shrink-0"></span>
+                <span class="font-display text-xs sm:text-sm font-bold uppercase tracking-wider text-white">${m.label}</span>
+                <span data-meal-preview="${m.key}" class="text-xs font-bold text-limefit truncate">${entry.horario || (entry.descricao ? 'Refeição preenchida' : 'Clique para editar')}</span>
               </div>
               <svg class="meal-chevron w-4 h-4 text-limefit transition-transform duration-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
-            <div id="meal-body-${m.key}" class="hidden border-t border-borderdark p-3 space-y-2 bg-panel/30">
+            <div id="meal-body-${m.key}" class="hidden border-t border-borderdark p-3.5 space-y-3 bg-panel/40">
               <div>
-                <label class="block text-[10px] font-semibold uppercase text-gray-400 mb-1">Horário / Resumo</label>
-                <input type="text" data-meal-field="horario" data-meal-key="${m.key}" value="${(entry.horario || '').replace(/"/g, '&quot;')}" placeholder="Ex: 07:30 • Café proteico" class="w-full bg-panel border border-borderdark rounded-md px-2.5 py-1.5 text-xs text-white focus:border-limefit focus:outline-none" ${isStudentMode ? 'disabled' : ''} />
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-limefit mb-1">Horário / Foco da Refeição</label>
+                <input type="text" data-meal-field="horario" data-meal-key="${m.key}" value="${(entry.horario || '').replace(/"/g, '&quot;')}" placeholder="Ex: 07:30 • Café proteico" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-xs sm:text-sm font-bold text-limefit focus:border-limefit focus:outline-none" ${isStudentMode ? 'disabled' : ''} />
               </div>
               <div>
-                <label class="block text-[10px] font-semibold uppercase text-gray-400 mb-1">Alimentos &amp; Quantidades</label>
-                <textarea rows="3" data-meal-field="descricao" data-meal-key="${m.key}" placeholder="Ex: 3 ovos mexidos • 2 fatias de pão integral • 1 banana..." class="w-full bg-panel border border-borderdark rounded-md px-2.5 py-1.5 text-xs text-white focus:border-limefit focus:outline-none" ${isStudentMode ? 'disabled' : ''}>${entry.descricao || ''}</textarea>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-300 mb-1">Alimentos, Quantidades &amp; Substituições</label>
+                <textarea rows="${lineCount}" data-meal-field="descricao" data-meal-key="${m.key}" placeholder="Ex: 3 ovos mexidos • 2 fatias de pão integral • 1 banana..." class="w-full bg-panel border border-borderdark rounded-md px-3.5 py-2.5 text-xs sm:text-sm font-medium leading-loose tracking-wide text-gray-100 focus:border-limefit focus:outline-none overflow-hidden resize-none" ${isStudentMode ? 'disabled' : ''}>${entry.descricao || ''}</textarea>
               </div>
             </div>
           `;
@@ -974,10 +1311,14 @@
         ['pescoco','ombros','torax','cintura','abdomen','quadril','bracoD','bracoE','bracoContD','bracoContE','coxaD','coxaE','pantD','pantE'].forEach(k => document.getElementById('per-' + k).value = p[k] ?? '');
         const dc = s.dc || {};
         ['peitoral','axilar','triceps','subescapular','abdominal','suprailiaca','coxa','panturrilha'].forEach(k => document.getElementById('dc-' + k).value = dc[k] ?? '');
-                document.getElementById('inp-treino-divisao').value = (s.treino && s.treino.divisao) || '';
+                const elNivel = document.getElementById('inp-treino-nivel');
+        if (elNivel) elNivel.value = (s.treino && s.treino.nivel) || 'iniciante';
+        document.getElementById('inp-treino-divisao').value = (s.treino && s.treino.divisao) || '';
         document.getElementById('inp-treino-cardio').value = (s.treino && s.treino.cardio) || '';
         renderTreinoDays(s);
         const alim = s.alimentacao || {};
+        const elAlimObj = document.getElementById('inp-alim-obj-select'); if (elAlimObj) elAlimObj.value = alim.objetivo || 'auto';
+        const elAlimEst = document.getElementById('inp-alim-estilo'); if (elAlimEst) elAlimEst.value = alim.estilo || 'padrao';
         const elMeta = document.getElementById('inp-alim-meta'); if (elMeta) elMeta.value = alim.meta || '';
         const elAgua = document.getElementById('inp-alim-agua'); if (elAgua) elAgua.value = alim.agua || '';
         const elSup = document.getElementById('inp-alim-suplementos'); if (elSup) elSup.value = alim.suplementos || '';
@@ -1075,11 +1416,75 @@
         });
         ['pescoco','ombros','torax','cintura','abdomen','quadril','bracoD','bracoE','bracoContD','bracoContE','coxaD','coxaE','pantD','pantE'].forEach(k => bind('per-' + k, 'per.' + k));
         ['peitoral','axilar','triceps','subescapular','abdominal','suprailiaca','coxa','panturrilha'].forEach(k => bind('dc-' + k, 'dc.' + k));
-                bind('inp-treino-divisao', 'treino.divisao'); bind('inp-treino-cardio', 'treino.cardio');
+                bind('inp-treino-nivel', 'treino.nivel');
+        bind('inp-treino-divisao', 'treino.divisao'); bind('inp-treino-cardio', 'treino.cardio');
+        const btnGerarIA = document.getElementById('btn-gerar-treino-ia');
+        if (btnGerarIA) {
+          btnGerarIA.addEventListener('click', () => {
+            if (isStudentMode) return;
+            const st = getActive();
+            if (!activeId || !st || !st.id) {
+              showToast('Selecione ou cadastre um aluno antes de montar o treino!');
+              return;
+            }
+            const nivelSel = document.getElementById('inp-treino-nivel').value || 'iniciante';
+            const focoSel = document.getElementById('inp-treino-foco-ia').value || 'auto';
+            const gerado = generateAIWorkout(st, nivelSel, focoSel);
+            st.treino = gerado;
+            document.getElementById('inp-treino-divisao').value = gerado.divisao;
+            document.getElementById('inp-treino-cardio').value = gerado.cardio;
+            renderTreinoDays(st);
+            // Abre automaticamente Segunda-feira para visualização imediata e mantém editável
+            const segBody = document.getElementById('day-body-seg');
+            const segChev = document.querySelector('[data-day-toggle="seg"] .day-chevron');
+            if (segBody) {
+              segBody.classList.remove('hidden');
+              autoResizeDayTextareas(segBody);
+            }
+            if (segChev) segChev.style.transform = 'rotate(180deg)';
+            saveStorage();
+            updateDerivedUI();
+            const labelMap = { iniciante: 'Iniciante', moderado: 'Moderado', avancado: 'Avançado' };
+            showToast(`Treino Seg a Sex (${labelMap[nivelSel]}) montado com sucesso! Você pode editar qualquer dia.`);
+          });
+        }
+        bind('inp-alim-obj-select', 'alimentacao.objetivo');
+        bind('inp-alim-estilo', 'alimentacao.estilo');
         bind('inp-alim-meta', 'alimentacao.meta');
         bind('inp-alim-agua', 'alimentacao.agua');
         bind('inp-alim-suplementos', 'alimentacao.suplementos');
         bind('inp-alim-obs', 'alimentacao.obs');
+        const btnGerarAlim = document.getElementById('btn-gerar-alim-crys');
+        if (btnGerarAlim) {
+          btnGerarAlim.addEventListener('click', () => {
+            if (isStudentMode) return;
+            const st = getActive();
+            if (!activeId || !st || !st.id) {
+              showToast('Selecione ou cadastre um aluno antes de montar a dieta!');
+              return;
+            }
+            const objSel = document.getElementById('inp-alim-obj-select').value || 'auto';
+            const estSel = document.getElementById('inp-alim-estilo').value || 'padrao';
+            const plano = generateCrysDiet(st, objSel, estSel);
+            st.alimentacao = plano;
+            document.getElementById('inp-alim-meta').value = plano.meta;
+            document.getElementById('inp-alim-agua').value = plano.agua;
+            document.getElementById('inp-alim-suplementos').value = plano.suplementos;
+            document.getElementById('inp-alim-obs').value = plano.obs;
+            renderAlimMeals(st);
+            const cafeBody = document.getElementById('meal-body-cafe');
+            const cafeChev = document.querySelector('[data-meal-toggle="cafe"] .meal-chevron');
+            if (cafeBody) {
+              cafeBody.classList.remove('hidden');
+              autoResizeDayTextareas(cafeBody);
+            }
+            if (cafeChev) cafeChev.style.transform = 'rotate(180deg)';
+            saveStorage();
+            updateDerivedUI();
+            const objNames = { hipertrofia: 'Hipertrofia', emagrecimento: 'Emagrecimento', recomposicao: 'Recomposição' };
+            showToast(`Plano Alimentar (${objNames[plano.objetivo]}) montado! Você pode editar qualquer refeição.`);
+          });
+        }
         const alimMealsEl = document.getElementById('alim-meals-list');
         if (alimMealsEl) {
           alimMealsEl.addEventListener('click', e => {
@@ -1091,10 +1496,12 @@
             const willOpen = body.classList.contains('hidden');
             body.classList.toggle('hidden');
             if (chev) chev.style.transform = willOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+            if (willOpen) autoResizeDayTextareas(body);
           });
           alimMealsEl.addEventListener('input', e => {
             const inp = e.target.closest('[data-meal-field]');
             if (!inp) return;
+            if (inp.tagName === 'TEXTAREA') autoResizeDayTextareas(inp.parentElement);
             const key = inp.getAttribute('data-meal-key');
             const field = inp.getAttribute('data-meal-field');
             const st = getActive();
@@ -1118,11 +1525,13 @@
           const willOpen = body.classList.contains('hidden');
           body.classList.toggle('hidden');
           if (chev) chev.style.transform = willOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+          if (willOpen) autoResizeDayTextareas(body);
         });
 
         document.getElementById('treino-days-list').addEventListener('input', e => {
           const inp = e.target.closest('[data-day-field]');
           if (!inp) return;
+          if (inp.tagName === 'TEXTAREA') autoResizeDayTextareas(inp.parentElement);
           const key = inp.getAttribute('data-day-key');
           const field = inp.getAttribute('data-day-field');
           const st = getActive();
@@ -1427,6 +1836,10 @@
           if (alunosBlock) alunosBlock.classList.add('hidden');
           if (questBlock) questBlock.classList.add('hidden');
           if (saveBtn) saveBtn.classList.add('hidden');
+          const aiBox = document.getElementById('ai-treino-box');
+          if (aiBox) aiBox.classList.add('hidden');
+          const aiAlimBox = document.getElementById('ai-alim-box');
+          if (aiAlimBox) aiAlimBox.classList.add('hidden');
           document.querySelectorAll('main input, main select, main textarea').forEach(el => {
             el.disabled = true;
             el.classList.add('opacity-80', 'cursor-not-allowed');
@@ -1438,6 +1851,10 @@
           if (alunosBlock) alunosBlock.classList.remove('hidden');
           if (questBlock) questBlock.classList.remove('hidden');
           if (saveBtn) saveBtn.classList.remove('hidden');
+          const aiBox = document.getElementById('ai-treino-box');
+          if (aiBox) aiBox.classList.remove('hidden');
+          const aiAlimBox = document.getElementById('ai-alim-box');
+          if (aiAlimBox) aiAlimBox.classList.remove('hidden');
           document.querySelectorAll('main input, main select, main textarea').forEach(el => {
             el.disabled = false;
             el.classList.remove('opacity-80', 'cursor-not-allowed');
