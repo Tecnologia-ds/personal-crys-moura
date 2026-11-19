@@ -677,7 +677,7 @@
       const ADMIN_PASS = '2026';
       const PERSONAL_PIN = '2026';
       const urlParams = new URLSearchParams(window.location.search);
-      const urlAluno = urlParams.get('aluno');
+      let urlAluno = urlParams.get('aluno');
 
       function getSession() {
         if (urlAluno) return { role: 'student', studentId: urlAluno };
@@ -1302,15 +1302,21 @@
       });
 
       document.getElementById('btn-logout').addEventListener('click', () => {
+        urlAluno = null;
         setSession(null);
         activeId = null;
-        if (urlAluno) {
-          window.location.href = window.location.href.split('?')[0];
-          return;
-        }
+        try {
+          if (window.location.search) {
+            window.history.replaceState({}, '', window.location.pathname);
+          }
+        } catch (e) {}
         backToMenu();
         populateForm(getActive());
         applyAuthUI();
+        document.getElementById('login-user').value = '';
+        document.getElementById('login-pass').value = '';
+        document.getElementById('login-error').classList.add('hidden');
+        document.getElementById('login-screen').classList.remove('hidden');
         showToast('Você saiu da plataforma.');
       });
 
