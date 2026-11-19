@@ -545,6 +545,53 @@
 
   <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-limefit text-black font-bold text-sm px-4 py-3 rounded-lg shadow-2xl"></div>
 
+  <!-- Modal Simulador Biomecânico / Execução do Exercício -->
+  <div id="modal-exercise-video" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-charcoal border border-limefit/40 rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl">
+      <div class="px-4 py-3 border-b border-borderdark flex items-center justify-between gap-3 bg-obsidian/90">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="w-2 h-5 bg-limefit -skew-x-12 shrink-0"></span>
+          <div class="min-w-0">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-limefit">Simulador de Execução Biomecânica</div>
+            <h3 id="video-modal-title" class="font-display text-sm sm:text-base uppercase text-white truncate">Exercício</h3>
+          </div>
+        </div>
+        <button id="btn-close-video-modal" type="button" class="px-3 py-1.5 rounded-md bg-panel hover:bg-borderdark text-gray-200 text-xs font-bold uppercase shrink-0">Fechar ✕</button>
+      </div>
+      <div class="p-4 space-y-3">
+        <div id="video-modal-frame-wrap" class="relative w-full aspect-video bg-white rounded-xl overflow-hidden border-[3px] border-black shadow-inner flex items-center justify-center">
+          <canvas id="mannequin-canvas" class="w-full h-full block"></canvas>
+          <video id="video-modal-native" class="w-full h-full hidden bg-black" controls playsinline></video>
+          <div id="mannequin-hud" class="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 pointer-events-none">
+            <span id="mannequin-muscle-tag" class="px-2.5 py-1 rounded-md bg-zinc-950/90 border border-zinc-700 text-[10px] font-extrabold uppercase tracking-wider text-white shadow">Músculo Alvo</span>
+            <span id="mannequin-phase-tag" class="px-2.5 py-1 rounded-md bg-red-600 text-white text-[10px] font-extrabold uppercase tracking-wider shadow">▲ Contração</span>
+          </div>
+          <div id="mannequin-controls" class="absolute bottom-2.5 left-2.5 right-2.5 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 bg-zinc-950/90 border border-zinc-700 rounded-lg px-2 py-1 shadow">
+              <button id="btn-mannequin-gender" type="button" class="text-[10px] font-bold uppercase text-limefit hover:text-white px-1.5 py-0.5 border-r border-zinc-700 pr-2">Modelo: Masc</button>
+              <button id="btn-mannequin-speed" type="button" class="text-[10px] font-bold uppercase text-gray-200 hover:text-limefit px-1.5 py-0.5">Vel: 1x</button>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="mannequin-reps-badge" class="hidden">4x12 Rep</span>
+              <a id="video-modal-yt-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-zinc-950/90 hover:bg-limefit text-white hover:text-black border border-zinc-700 hover:border-limefit text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg shadow transition">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <span>Ver no YouTube</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div id="video-modal-cues" class="bg-panel/80 border border-borderdark rounded-lg p-3 text-xs text-gray-300 leading-relaxed"></div>
+        <div id="video-modal-admin-edit" class="hidden border-t border-borderdark pt-3 space-y-2">
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-limefit">Link de Vídeo Próprio (MP4 ou YouTube — Opcional)</label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input id="inp-custom-video-url" type="url" placeholder="Cole um link MP4 direto para tocar aqui ou link do YouTube (vazio = boneco 3D/2D)" class="flex-1 bg-panel border border-borderdark rounded-md px-3 py-2 text-xs text-white focus:border-limefit focus:outline-none" />
+            <button id="btn-save-custom-video" type="button" class="px-4 py-2 rounded-md bg-limefit hover:bg-limefitDark text-black font-display text-xs uppercase font-bold shrink-0">Salvar Link</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Acesso Personal (Desbloquear Modo Aluno) -->
   <div id="modal-personal-pin" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-charcoal border border-borderdark rounded-xl max-w-xs w-full p-5 space-y-3">
@@ -1118,14 +1165,844 @@
         });
       }
 
+      const EXERCISE_VIDEO_DB = [
+        { keys: ['supino reto'], anim: 'bench_flat', muscle: 'Peitoral Maior • Tríceps', cue: 'Escápulas retraídas e apoiadas no banco, pés firmes no chão, desça a barra/halteres até a linha média do peitoral e empurre sem travar os cotovelos.' },
+        { keys: ['supino inclinado'], anim: 'bench_incline', muscle: 'Peitoral Superior • Deltoide Anterior', cue: 'Banco ajustado a 30°–45°. Desça os halteres controlando a fase excêntrica por 2-3s até a parte superior do peitoral e suba convergindo.' },
+        { keys: ['crucifixo', 'peck deck', 'cross-over', 'crossover'], anim: 'chest_fly', muscle: 'Peitoral • Adução Horizontal', cue: 'Mantenha leve semiflexão nos cotovelos durante todo o arco de movimento, alongando o peitoral sem projetar os ombros à frente.' },
+        { keys: ['flexao de bracos', 'flexão de braços', 'paralelas', 'supino declinado'], anim: 'pushup', muscle: 'Peitoral • Tríceps • Core', cue: 'Tronco alinhado com core ativo, cotovelos a ~45° do tronco na descida e extensão completa na subida.' },
+        { keys: ['triceps pulley', 'tríceps pulley', 'corda'], anim: 'triceps_pushdown', muscle: 'Tríceps Braquial', cue: 'Cotovelos fixos junto ao tronco. Estenda totalmente o antebraço abrindo levemente a corda no final para máxima contração.' },
+        { keys: ['triceps testa', 'tríceps testa', 'barra reta no cabo', 'triceps frances', 'tríceps francês'], anim: 'triceps_overhead', muscle: 'Tríceps Cabeça Longa', cue: 'Mantenha os braços estabilizados, flexione apenas os cotovelos levando a carga em direção à testa/nuca e estenda com controle.' },
+        { keys: ['puxada frontal', 'puxada supinada', 'pulldown'], anim: 'lat_pulldown', muscle: 'Latíssimo do Dorso • Bíceps', cue: 'Inicie deprimindo os ombros (longe das orelhas), puxe a barra em direção à parte superior do peito inclinando levemente o tronco.' },
+        { keys: ['remada curvada', 'remada sentada', 'remada baixa', 'cavalinho', 'remada unilateral', 'serrote'], anim: 'row', muscle: 'Dorsais • Romboides • Trapézio Médio', cue: 'Coluna neutra e abdômen contraído. Puxe a carga em direção ao umbigo/quadril esmagando as escápulas no final.' },
+        { keys: ['rosca direta', 'rosca scott', 'rosca martelo', 'rosca punho'], anim: 'biceps_curl', muscle: 'Bíceps Braquial • Braquial', cue: 'Cotovelos alinhados ao lado do tronco sem balançar a lombar; suba contraindo o bíceps e controle a descida.' },
+        { keys: ['agachamento livre', 'agachamento guiado', 'smith', 'agachamento hack'], anim: 'squat', muscle: 'Quadríceps • Glúteos • Core', cue: 'Pés na largura dos ombros, joelhos acompanhando a ponta dos pés, coluna neutra e quadril descendo até pelo menos 90°.' },
+        { keys: ['leg press'], anim: 'leg_press', muscle: 'Quadríceps • Glúteo Máximo', cue: 'Pés apoiados na plataforma sem tirar o quadril/lombar do encosto; desça controlando até 90° e empurre pelos calcanhares.' },
+        { keys: ['cadeira extensora'], anim: 'leg_extension', muscle: 'Quadríceps (Reto Femoral / Vastos)', cue: 'Alinhe o eixo do joelho com o eixo da máquina, estenda completamente contraindo o quadríceps e segure 1-2s no topo.' },
+        { keys: ['mesa flexora', 'cadeira flexora'], anim: 'leg_curl', muscle: 'Isquiotibiais (Posterior de Coxa)', cue: 'Quadril bem apoiado no banco sem elevar a pelve; flexione os joelhos com controle máximo na volta.' },
+        { keys: ['stiff'], anim: 'rdl', muscle: 'Posterior de Coxa • Glúteos • Eretores', cue: 'Joelhos semiflexionados fixos, empurre o quadril para trás mantendo a barra/halteres rente às pernas e coluna reta.' },
+        { keys: ['elevacao pelvica', 'elevação pélvica'], anim: 'hip_thrust', muscle: 'Glúteo Máximo', cue: 'Escápulas apoiadas no banco, queixo levemente recolhido, suba o quadril contraindo fortemente os glúteos no topo.' },
+        { keys: ['bulgaro', 'búlgaro', 'afundo', 'passada'], anim: 'lunge', muscle: 'Quadríceps • Glúteos • Equilíbrio', cue: 'Tronco firme, desça o joelho de trás em direção ao solo mantendo o joelho da frente alinhado com o pé.' },
+        { keys: ['cadeira abdutora'], anim: 'abduction', muscle: 'Glúteo Médio e Mínimo', cue: 'Mantenha o apoio lombar firme, abra os joelhos controlando a volta sem bater as placas de peso.' },
+        { keys: ['panturrilha'], anim: 'calf_raise', muscle: 'Gastrocnêmio • Sóleo', cue: 'Amplitude máxima: alongue bem o calcanhar na descida (pausa 1-2s) e suba na ponta dos pés.' },
+        { keys: ['desenvolvimento'], anim: 'shoulder_press', muscle: 'Deltoide Anterior e Medial • Tríceps', cue: 'Abdômen travado para não hiperextender a lombar; empurre os halteres/máquina acima da cabeça sem bater no topo.' },
+        { keys: ['elevacao lateral', 'elevação lateral'], anim: 'lateral_raise', muscle: 'Deltoide Lateral (Medial)', cue: 'Cotovelos levemente flexionados, eleve os braços no plano escapular até a altura dos ombros sem encolher o trapézio.' },
+        { keys: ['elevacao frontal', 'elevação frontal'], anim: 'front_raise', muscle: 'Deltoide Anterior', cue: 'Suba a carga à frente até a linha dos ombros com tronco estável e desça devagar.' },
+        { keys: ['crucifixo inverso', 'face pull'], anim: 'rear_delt', muscle: 'Deltoide Posterior • Manguito', cue: 'Foco no deltoide posterior: abra os braços ou puxe em direção à testa mantendo os cotovelos altos.' },
+        { keys: ['encolhimento'], anim: 'shrug', muscle: 'Trapézio Superior', cue: 'Eleve os ombros verticalmente em direção às orelhas, segure 1s no topo e desça alongando.' },
+        { keys: ['prancha'], anim: 'plank', muscle: 'Core Profundo • Transverso Abdominal', cue: 'Mantenha pelve neutra, glúteos e abdômen contraídos durante toda a execução e respiração contínua.' },
+        { keys: ['abdominal', 'core', 'elevacao de pernas', 'elevação de pernas'], anim: 'crunch', muscle: 'Reto Abdominal • Flexores', cue: 'Expire ao contrair o abdômen aproximando costelas e pelve sem puxar o pescoço.' }
+      ];
+
+      function normalizeExText(str) {
+        return (str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      }
+
+      function extractExerciseTitle(rawLine) {
+        let clean = (rawLine || '').replace(/^\d+[\.\)\-\s]+/, '').trim();
+        clean = clean.split('—')[0].split('|')[0].trim();
+        return clean || (rawLine || '').trim();
+      }
+
+      function findExerciseVideoInfo(rawLine, customUrl) {
+        const title = extractExerciseTitle(rawLine);
+        const norm = normalizeExText(title);
+        let matched = null;
+        for (const item of EXERCISE_VIDEO_DB) {
+          if (item.keys.some(k => norm.includes(normalizeExText(k)))) {
+            matched = item;
+            break;
+          }
+        }
+        const cue = matched
+          ? matched.cue
+          : 'Execute com amplitude completa, postura alinhada e controle tanto na subida quanto na descida (2 a 3 segundos).';
+        const anim = matched ? matched.anim : 'squat';
+        const muscle = matched ? matched.muscle : 'Execução Guiada • Controle Motor';
+        const q = encodeURIComponent(`como fazer ${title} execucao correta musculacao`);
+        const defaultYtUrl = `https://www.youtube.com/results?search_query=${q}`;
+
+        const url = (customUrl || '').trim();
+        if (url && /\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) {
+          return { title, type: 'native', url, ytUrl: defaultYtUrl, anim, muscle, cue };
+        }
+        return {
+          title,
+          type: 'mannequin',
+          url: url || defaultYtUrl,
+          ytUrl: url || defaultYtUrl,
+          anim,
+          muscle,
+          cue
+        };
+      }
+
+      let currentVideoContext = null;
+      let mannequinRafId = null;
+      let mannequinSpeed = 1;
+      let activeMannequinAnim = 'squat';
+      let mannequinGender = 'M';
+
+      function extractRepsBadge(rawLine) {
+        const m = (rawLine || '').match(/(\d+\s*[x×]\s*\d+(?:\s*-\s*\d+)?(?:s)?)/i);
+        return m ? m[1].replace(/\s+/g, '') + ' Rep' : 'Execução Guiada';
+      }
+
+      function drawMannequinFrame(ctx, w, h, anim, t) {
+        ctx.clearRect(0, 0, w, h);
+
+        // Pure white studio illustration background matching reference cards
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+
+        const floorY = h * 0.84;
+
+        // Smooth biomechanical rep cycle 0 -> 1 -> 0
+        const raw = (Math.sin(t * 2.4) + 1) / 2;
+        const rep = raw * raw * (3 - 2 * raw);
+        const pulse = 0.65 + 0.35 * rep;
+
+        const phaseTag = document.getElementById('mannequin-phase-tag');
+        if (phaseTag) {
+          const goingUp = Math.cos(t * 2.4) >= 0;
+          phaseTag.textContent = goingUp ? '▲ Fase Concêntrica' : '▼ Fase Excêntrica';
+          phaseTag.style.backgroundColor = goingUp ? '#dc2626' : '#18181b';
+          phaseTag.style.color = '#ffffff';
+        }
+
+        const isFemale = mannequinGender === 'F';
+        const cx = w * 0.48;
+        const scale = Math.min(w, h) / 265;
+
+        // Subtle watermark silhouette in center background like reference
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.035)';
+        ctx.font = `900 ${Math.round(13 * scale)}px "Oswald", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('PERSONAL CRYS MOURA', w * 0.5, h * 0.52);
+        ctx.restore();
+
+        // Soft elliptical studio floor shadow under athlete
+        ctx.save();
+        const shGrad = ctx.createRadialGradient(cx, floorY + 2 * scale, 2, cx, floorY + 2 * scale, 64 * scale);
+        shGrad.addColorStop(0, 'rgba(0, 0, 0, 0.24)');
+        shGrad.addColorStop(0.65, 'rgba(0, 0, 0, 0.09)');
+        shGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = shGrad;
+        ctx.beginPath();
+        ctx.ellipse(cx, floorY + 2 * scale, 64 * scale, 9 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Joint coordinates (3/4 isometric perspective)
+        let head = { x: cx, y: floorY - 196 * scale };
+        let shoulder = { x: cx, y: floorY - 162 * scale };
+        let hip = { x: cx, y: floorY - 102 * scale };
+        let knee = { x: cx + 7 * scale, y: floorY - 52 * scale };
+        let ankle = { x: cx + 2 * scale, y: floorY - 7 * scale };
+        let elbow = { x: cx + 16 * scale, y: floorY - 128 * scale };
+        let hand = { x: cx + 24 * scale, y: floorY - 96 * scale };
+        // Far-side limbs offset in 3/4 view for realistic anatomical depth
+        let knee2 = { x: cx - 10 * scale, y: floorY - 52 * scale };
+        let ankle2 = { x: cx - 15 * scale, y: floorY - 9 * scale };
+        let elbow2 = { x: cx - 15 * scale, y: floorY - 128 * scale };
+        let hand2 = { x: cx - 21 * scale, y: floorY - 96 * scale };
+        let hasBilateral2 = false;
+        let equipment = null;
+
+        const activeMuscles = {
+          chest: false, back: false, shoulders: false, biceps: false, triceps: false,
+          abs: false, glutes: false, quads: false, hams: false, calves: false
+        };
+
+        if (['bench_flat', 'bench_incline', 'chest_fly', 'pushup'].includes(anim)) {
+          activeMuscles.chest = true; activeMuscles.triceps = true; activeMuscles.shoulders = true;
+        } else if (['lat_pulldown', 'row'].includes(anim)) {
+          activeMuscles.back = true; activeMuscles.biceps = true; activeMuscles.shoulders = true;
+        } else if (['biceps_curl'].includes(anim)) {
+          activeMuscles.biceps = true;
+        } else if (['triceps_pushdown', 'triceps_overhead'].includes(anim)) {
+          activeMuscles.triceps = true;
+        } else if (['shoulder_press', 'lateral_raise', 'front_raise', 'rear_delt', 'shrug'].includes(anim)) {
+          activeMuscles.shoulders = true; if (anim === 'shoulder_press') activeMuscles.triceps = true;
+        } else if (['squat', 'lunge', 'leg_press'].includes(anim)) {
+          activeMuscles.quads = true; activeMuscles.glutes = true; activeMuscles.hams = true;
+        } else if (['leg_extension'].includes(anim)) {
+          activeMuscles.quads = true;
+        } else if (['leg_curl', 'rdl'].includes(anim)) {
+          activeMuscles.hams = true; activeMuscles.glutes = true;
+        } else if (['hip_thrust', 'abduction'].includes(anim)) {
+          activeMuscles.glutes = true; activeMuscles.hams = true;
+        } else if (['calf_raise'].includes(anim)) {
+          activeMuscles.calves = true;
+        } else if (['plank', 'crunch'].includes(anim)) {
+          activeMuscles.abs = true;
+        }
+
+        const deg = d => (d * Math.PI) / 180;
+        const limb = (p, len, angDeg) => ({
+          x: p.x + Math.cos(deg(angDeg)) * len * scale,
+          y: p.y + Math.sin(deg(angDeg)) * len * scale
+        });
+
+        // Exercise kinematics
+        if (anim === 'squat' || anim === 'lunge') {
+          hasBilateral2 = true;
+          const drop = rep * 48 * scale;
+          hip = { x: cx - (16 + rep * 18) * scale, y: floorY - 102 * scale + drop };
+          shoulder = { x: cx + (4 + rep * 14) * scale, y: hip.y - 58 * scale };
+          head = { x: shoulder.x + 6 * scale, y: shoulder.y - 28 * scale };
+          knee = { x: cx + (14 + rep * 18) * scale, y: floorY - 52 * scale + drop * 0.35 };
+          ankle = { x: cx + 4 * scale, y: floorY - 7 * scale };
+          knee2 = { x: knee.x - 14 * scale, y: knee.y - 3 * scale };
+          ankle2 = { x: ankle.x - 14 * scale, y: ankle.y - 3 * scale };
+          if (anim === 'lunge') {
+            ankle = { x: cx + 34 * scale, y: floorY - 7 * scale };
+            knee = { x: cx + 36 * scale, y: floorY - 52 * scale + drop * 0.25 };
+            knee2 = { x: cx - 22 * scale, y: floorY - 46 * scale + drop * 0.72 };
+            ankle2 = { x: cx - 48 * scale, y: floorY - 18 * scale };
+          }
+          elbow = { x: shoulder.x - 10 * scale, y: shoulder.y + 22 * scale };
+          hand = { x: shoulder.x + 8 * scale, y: shoulder.y + 2 * scale };
+          elbow2 = { x: elbow.x - 10 * scale, y: elbow.y - 2 * scale };
+          hand2 = { x: hand.x - 10 * scale, y: hand.y - 2 * scale };
+          equipment = { type: 'barbell', x: shoulder.x - 4 * scale, y: shoulder.y - 4 * scale };
+        } else if (anim === 'rdl') {
+          hasBilateral2 = true;
+          const hinge = rep * 68;
+          hip = { x: cx - (10 + rep * 14) * scale, y: floorY - 100 * scale };
+          knee = { x: cx + 5 * scale, y: floorY - 52 * scale };
+          ankle = { x: cx + 2 * scale, y: floorY - 7 * scale };
+          knee2 = { x: knee.x - 13 * scale, y: knee.y - 3 * scale };
+          ankle2 = { x: ankle.x - 13 * scale, y: ankle.y - 3 * scale };
+          shoulder = limb(hip, 62, -85 + hinge);
+          head = limb(shoulder, 26, -80 + hinge * 0.85);
+          hand = { x: shoulder.x + 12 * scale, y: shoulder.y + 58 * scale };
+          elbow = { x: (shoulder.x + hand.x) / 2 - 2 * scale, y: (shoulder.y + hand.y) / 2 };
+          elbow2 = { x: elbow.x - 10 * scale, y: elbow.y - 2 * scale };
+          hand2 = { x: hand.x - 10 * scale, y: hand.y - 2 * scale };
+          equipment = { type: 'barbell', x: hand.x, y: hand.y };
+        } else if (anim === 'bench_flat' || anim === 'bench_incline' || anim === 'chest_fly') {
+          hasBilateral2 = true;
+          const benchY = floorY - 48 * scale;
+          const inc = anim === 'bench_incline' ? 24 : 0;
+          equipment = { type: 'bench', x: cx - 55 * scale, y: benchY, w: 115 * scale, inc };
+          hip = { x: cx - 10 * scale, y: benchY - 6 * scale };
+          shoulder = limb(hip, 58, -inc);
+          head = limb(shoulder, 24, -inc);
+          knee = { x: cx - 44 * scale, y: benchY - 4 * scale };
+          ankle = { x: cx - 48 * scale, y: floorY - 7 * scale };
+          knee2 = { x: knee.x - 10 * scale, y: knee.y - 3 * scale };
+          ankle2 = { x: ankle.x - 10 * scale, y: ankle.y - 3 * scale };
+          const pressLift = (18 + rep * 40) * scale;
+          hand = { x: shoulder.x + 4 * scale, y: shoulder.y - pressLift };
+          elbow = { x: shoulder.x - (16 - rep * 10) * scale, y: shoulder.y - pressLift * 0.45 };
+          elbow2 = { x: elbow.x - 12 * scale, y: elbow.y - 4 * scale };
+          hand2 = { x: hand.x - 12 * scale, y: hand.y - 4 * scale };
+          equipment.bar = { x: hand.x, y: hand.y };
+        } else if (anim === 'pushup' || anim === 'plank') {
+          hasBilateral2 = true;
+          const dip = anim === 'plank' ? 0 : rep * 22 * scale;
+          ankle = { x: cx - 78 * scale, y: floorY - 8 * scale };
+          ankle2 = { x: ankle.x - 8 * scale, y: ankle.y - 3 * scale };
+          hip = { x: cx - 14 * scale, y: floorY - 42 * scale + dip * 0.55 };
+          shoulder = { x: cx + 44 * scale, y: floorY - 52 * scale + dip };
+          head = { x: shoulder.x + 24 * scale, y: shoulder.y - 4 * scale };
+          hand = { x: shoulder.x + 4 * scale, y: floorY - 7 * scale };
+          elbow = anim === 'plank'
+            ? { x: shoulder.x + 4 * scale, y: floorY - 12 * scale }
+            : { x: shoulder.x - 14 * scale, y: (shoulder.y + hand.y) / 2 };
+          if (anim === 'plank') hand = { x: elbow.x + 24 * scale, y: floorY - 8 * scale };
+          elbow2 = { x: elbow.x - 10 * scale, y: elbow.y - 3 * scale };
+          hand2 = { x: hand.x - 10 * scale, y: hand.y - 3 * scale };
+        } else if (anim === 'lat_pulldown') {
+          hasBilateral2 = true;
+          const seatY = floorY - 46 * scale;
+          equipment = { type: 'pulley_top', x: cx, y: floorY - 215 * scale, seatY };
+          hip = { x: cx, y: seatY - 6 * scale };
+          shoulder = { x: cx - 4 * scale, y: hip.y - 58 * scale };
+          head = { x: shoulder.x + 2 * scale, y: shoulder.y - 26 * scale };
+          knee = { x: cx + 32 * scale, y: seatY - 4 * scale };
+          ankle = { x: cx + 32 * scale, y: floorY - 7 * scale };
+          knee2 = { x: knee.x - 12 * scale, y: knee.y - 3 * scale };
+          ankle2 = { x: ankle.x - 12 * scale, y: ankle.y - 3 * scale };
+          const barY = (shoulder.y - 48 * scale) + rep * 46 * scale;
+          hand = { x: shoulder.x + 14 * scale, y: barY };
+          elbow = { x: shoulder.x + 26 * scale, y: barY + 24 * scale };
+          elbow2 = { x: elbow.x - 16 * scale, y: elbow.y - 3 * scale };
+          hand2 = { x: hand.x - 16 * scale, y: hand.y - 3 * scale };
+          equipment.barY = barY;
+        } else if (anim === 'row') {
+          hasBilateral2 = true;
+          const seatY = floorY - 42 * scale;
+          equipment = { type: 'cable_row', x: cx + 82 * scale, y: seatY - 14 * scale, seatY };
+          hip = { x: cx - 26 * scale, y: seatY - 6 * scale };
+          shoulder = { x: cx - 32 * scale + rep * 6 * scale, y: hip.y - 58 * scale };
+          head = { x: shoulder.x + 2 * scale, y: shoulder.y - 26 * scale };
+          knee = { x: cx + 16 * scale, y: seatY - 8 * scale };
+          ankle = { x: cx + 56 * scale, y: seatY - 7 * scale };
+          knee2 = { x: knee.x - 10 * scale, y: knee.y - 3 * scale };
+          ankle2 = { x: ankle.x - 10 * scale, y: ankle.y - 3 * scale };
+          hand = { x: shoulder.x + (54 - rep * 34) * scale, y: shoulder.y + 34 * scale };
+          elbow = { x: shoulder.x + (24 - rep * 36) * scale, y: shoulder.y + 30 * scale };
+          elbow2 = { x: elbow.x - 10 * scale, y: elbow.y - 3 * scale };
+          hand2 = { x: hand.x - 10 * scale, y: hand.y - 3 * scale };
+        } else if (anim === 'biceps_curl') {
+          hasBilateral2 = true;
+          elbow = { x: shoulder.x + 6 * scale, y: shoulder.y + 32 * scale };
+          const ang = 75 - rep * 135;
+          hand = limb(elbow, 30, ang);
+          elbow2 = { x: shoulder.x - 10 * scale, y: shoulder.y + 30 * scale };
+          hand2 = limb(elbow2, 30, ang - 8);
+          equipment = { type: 'dumbbell', x: hand.x, y: hand.y, x2: hand2.x, y2: hand2.y };
+        } else if (anim === 'triceps_pushdown') {
+          equipment = { type: 'pulley_top', x: cx + 44 * scale, y: floorY - 210 * scale };
+          elbow = { x: shoulder.x + 8 * scale, y: shoulder.y + 30 * scale };
+          const ang = -45 + rep * 125;
+          hand = limb(elbow, 30, ang);
+          equipment.barY = hand.y;
+          equipment.barX = hand.x;
+        } else if (anim === 'triceps_overhead' || anim === 'shoulder_press') {
+          hasBilateral2 = true;
+          const lift = rep * 36 * scale;
+          elbow = { x: shoulder.x + 14 * scale, y: shoulder.y - (14 + lift * 0.45) };
+          hand = { x: shoulder.x + 8 * scale, y: shoulder.y - (32 + lift) };
+          elbow2 = { x: shoulder.x - 14 * scale, y: elbow.y - 3 * scale };
+          hand2 = { x: shoulder.x - 10 * scale, y: hand.y - 3 * scale };
+          equipment = { type: 'dumbbell', x: hand.x, y: hand.y, x2: hand2.x, y2: hand2.y };
+        } else if (anim === 'lateral_raise' || anim === 'front_raise' || anim === 'rear_delt' || anim === 'shrug') {
+          hasBilateral2 = true;
+          const raiseAng = anim === 'shrug' ? 85 : (85 - rep * 88);
+          if (anim === 'shrug') shoulder.y -= rep * 10 * scale;
+          elbow = limb(shoulder, 30, raiseAng);
+          hand = limb(elbow, 28, raiseAng - 6);
+          elbow2 = limb(shoulder, 30, 180 - raiseAng);
+          hand2 = limb(elbow2, 28, 180 - raiseAng + 6);
+          equipment = { type: 'dumbbell', x: hand.x, y: hand.y, x2: hand2.x, y2: hand2.y };
+        } else if (anim === 'leg_press') {
+          hasBilateral2 = true;
+          const seatY = floorY - 38 * scale;
+          hip = { x: cx - 44 * scale, y: seatY };
+          shoulder = { x: cx - 64 * scale, y: seatY - 46 * scale };
+          head = { x: shoulder.x - 6 * scale, y: shoulder.y - 24 * scale };
+          const push = rep * 38 * scale;
+          ankle = { x: cx + 26 * scale + push, y: seatY - 46 * scale };
+          knee = { x: cx - 10 * scale + push * 0.45, y: seatY - (20 - rep * 12) * scale };
+          knee2 = { x: knee.x - 10 * scale, y: knee.y - 4 * scale };
+          ankle2 = { x: ankle.x - 10 * scale, y: ankle.y - 4 * scale };
+          elbow = { x: hip.x + 6 * scale, y: hip.y - 16 * scale };
+          hand = { x: hip.x + 14 * scale, y: hip.y };
+          equipment = { type: 'sled', x: ankle.x + 8 * scale, y: ankle.y };
+        } else if (anim === 'leg_extension' || anim === 'leg_curl' || anim === 'abduction') {
+          // Matches top-left illustration in user's reference (seated on black bench with ankle cuff!)
+          const seatY = floorY - 54 * scale;
+          equipment = { type: 'bench', x: cx - 42 * scale, y: seatY + 4 * scale, w: 72 * scale, inc: 0 };
+          hip = { x: cx - 12 * scale, y: seatY };
+          shoulder = { x: cx - 18 * scale, y: seatY - 56 * scale };
+          head = { x: shoulder.x + 2 * scale, y: shoulder.y - 25 * scale };
+          knee = { x: cx + 22 * scale, y: seatY };
+          const legAng = anim === 'leg_curl' ? (15 + rep * 75) : (85 - rep * 80);
+          ankle = limb(knee, 46, legAng);
+          knee2 = { x: cx + 10 * scale, y: seatY + 2 * scale };
+          ankle2 = { x: cx + 6 * scale, y: floorY - 7 * scale };
+          elbow = { x: shoulder.x - 8 * scale, y: seatY - 26 * scale };
+          hand = { x: hip.x - 14 * scale, y: seatY + 2 * scale };
+          equipment.pad = { x: ankle.x, y: ankle.y };
+        } else if (anim === 'hip_thrust') {
+          hasBilateral2 = true;
+          const benchY = floorY - 48 * scale;
+          equipment = { type: 'bench', x: cx - 78 * scale, y: benchY, w: 46 * scale, inc: 0 };
+          shoulder = { x: cx - 34 * scale, y: benchY - 6 * scale };
+          head = { x: shoulder.x - 20 * scale, y: shoulder.y - 14 * scale };
+          hip = { x: cx + 8 * scale, y: floorY - (18 + rep * 36) * scale };
+          knee = { x: cx + 48 * scale, y: floorY - 48 * scale };
+          ankle = { x: cx + 52 * scale, y: floorY - 7 * scale };
+          knee2 = { x: knee.x - 10 * scale, y: knee.y - 3 * scale };
+          ankle2 = { x: ankle.x - 10 * scale, y: ankle.y - 3 * scale };
+          elbow = { x: shoulder.x + 12 * scale, y: shoulder.y + 18 * scale };
+          hand = { x: hip.x, y: hip.y - 6 * scale };
+          equipment.bar = { x: hip.x, y: hip.y - 8 * scale };
+        } else if (anim === 'calf_raise') {
+          hasBilateral2 = true;
+          const lift = rep * 16 * scale;
+          head.y -= lift; shoulder.y -= lift; hip.y -= lift; knee.y -= lift; knee2.y -= lift;
+          elbow.y -= lift; hand.y -= lift; elbow2.y -= lift; hand2.y -= lift;
+          ankle = { x: cx + 4 * scale, y: floorY - (7 + lift) };
+          ankle2 = { x: cx - 10 * scale, y: floorY - (9 + lift) };
+        } else if (anim === 'crunch') {
+          hasBilateral2 = true;
+          hip = { x: cx - 8 * scale, y: floorY - 10 * scale };
+          knee = { x: cx + 28 * scale, y: floorY - 44 * scale };
+          ankle = { x: cx + 56 * scale, y: floorY - 10 * scale };
+          knee2 = { x: knee.x - 10 * scale, y: knee.y - 3 * scale };
+          ankle2 = { x: ankle.x - 10 * scale, y: ankle.y - 3 * scale };
+          const curl = rep * 48;
+          shoulder = limb(hip, 54, -172 + curl);
+          head = limb(shoulder, 22, -165 + curl * 1.15);
+          elbow = { x: shoulder.x + 8 * scale, y: shoulder.y - 16 * scale };
+          hand = { x: head.x - 4 * scale, y: head.y - 4 * scale };
+        }
+
+        // Draw crisp black & metallic studio gym equipment matching reference illustrations
+        ctx.save();
+        if (equipment) {
+          if (equipment.type === 'bench') {
+            // Chrome/steel legs
+            ctx.strokeStyle = '#71717a';
+            ctx.lineWidth = 4.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(equipment.x + 10 * scale, equipment.y + 2 * scale);
+            ctx.lineTo(equipment.x + 10 * scale, floorY);
+            ctx.moveTo(equipment.x + equipment.w - 12 * scale, equipment.y - 2 * scale);
+            ctx.lineTo(equipment.x + equipment.w - 12 * scale, floorY);
+            ctx.stroke();
+            // Foot bases
+            ctx.strokeStyle = '#18181b';
+            ctx.lineWidth = 3 * scale;
+            ctx.beginPath();
+            ctx.moveTo(equipment.x + 2 * scale, floorY);
+            ctx.lineTo(equipment.x + 18 * scale, floorY);
+            ctx.moveTo(equipment.x + equipment.w - 20 * scale, floorY);
+            ctx.lineTo(equipment.x + equipment.w - 4 * scale, floorY);
+            ctx.stroke();
+
+            // Glossy black padded bench cushion
+            ctx.strokeStyle = '#09090b';
+            ctx.lineWidth = 10 * scale;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(equipment.x, equipment.y);
+            ctx.lineTo(equipment.x + equipment.w * 0.55, equipment.y);
+            ctx.lineTo(equipment.x + equipment.w, equipment.y - Math.sin(deg(equipment.inc)) * equipment.w * 0.55);
+            ctx.stroke();
+            // Highlight edge on cushion
+            ctx.strokeStyle = '#52525b';
+            ctx.lineWidth = 1.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(equipment.x + 2 * scale, equipment.y - 3.5 * scale);
+            ctx.lineTo(equipment.x + equipment.w * 0.55, equipment.y - 3.5 * scale);
+            ctx.stroke();
+
+            if (equipment.pad) {
+              // Resistance strap / ankle cuff under bench like reference
+              ctx.strokeStyle = '#18181b';
+              ctx.lineWidth = 2 * scale;
+              ctx.beginPath();
+              ctx.moveTo(equipment.x + equipment.w * 0.55, equipment.y + 4 * scale);
+              ctx.lineTo(equipment.pad.x, equipment.pad.y);
+              ctx.stroke();
+              ctx.fillStyle = '#09090b';
+              ctx.fillRect(equipment.pad.x - 4 * scale, equipment.pad.y - 3 * scale, 8 * scale, 6 * scale);
+            }
+
+            if (equipment.bar) {
+              ctx.strokeStyle = '#3f3f46';
+              ctx.lineWidth = 3.5 * scale;
+              ctx.beginPath();
+              ctx.moveTo(equipment.bar.x - 24 * scale, equipment.bar.y);
+              ctx.lineTo(equipment.bar.x + 24 * scale, equipment.bar.y);
+              ctx.stroke();
+              ctx.fillStyle = '#18181b';
+              ctx.fillRect(equipment.bar.x - 26 * scale, equipment.bar.y - 12 * scale, 6 * scale, 24 * scale);
+              ctx.fillRect(equipment.bar.x + 20 * scale, equipment.bar.y - 12 * scale, 6 * scale, 24 * scale);
+            }
+          } else if (equipment.type === 'barbell') {
+            ctx.strokeStyle = '#3f3f46';
+            ctx.lineWidth = 3.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(equipment.x - 26 * scale, equipment.y);
+            ctx.lineTo(equipment.x + 26 * scale, equipment.y);
+            ctx.stroke();
+            ctx.fillStyle = '#18181b';
+            ctx.fillRect(equipment.x - 28 * scale, equipment.y - 13 * scale, 6 * scale, 26 * scale);
+            ctx.fillRect(equipment.x + 22 * scale, equipment.y - 13 * scale, 6 * scale, 26 * scale);
+          } else if (equipment.type === 'dumbbell') {
+            ctx.fillStyle = '#18181b';
+            ctx.strokeStyle = '#52525b';
+            ctx.lineWidth = 1.5 * scale;
+            ctx.beginPath();
+            ctx.arc(equipment.x, equipment.y, 7 * scale, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+            if (equipment.x2 !== undefined) {
+              ctx.beginPath();
+              ctx.arc(equipment.x2, equipment.y2, 7 * scale, 0, Math.PI * 2);
+              ctx.fill(); ctx.stroke();
+            }
+          } else if (equipment.type === 'pulley_top') {
+            ctx.strokeStyle = '#27272a';
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(equipment.x, equipment.y);
+            ctx.lineTo(equipment.barX || hand.x, equipment.barY);
+            ctx.stroke();
+            ctx.strokeStyle = '#18181b';
+            ctx.lineWidth = 4.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo((equipment.barX || hand.x) - 18 * scale, equipment.barY);
+            ctx.lineTo((equipment.barX || hand.x) + 18 * scale, equipment.barY);
+            ctx.stroke();
+            if (equipment.seatY) {
+              ctx.strokeStyle = '#09090b';
+              ctx.lineWidth = 8 * scale;
+              ctx.beginPath();
+              ctx.moveTo(cx - 18 * scale, equipment.seatY);
+              ctx.lineTo(cx + 26 * scale, equipment.seatY);
+              ctx.stroke();
+            }
+          } else if (equipment.type === 'cable_row') {
+            ctx.strokeStyle = '#27272a';
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(equipment.x, equipment.y);
+            ctx.lineTo(hand.x, hand.y);
+            ctx.stroke();
+            ctx.fillStyle = '#18181b';
+            ctx.beginPath();
+            ctx.arc(hand.x, hand.y, 5 * scale, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (equipment.type === 'sled') {
+            ctx.strokeStyle = '#27272a';
+            ctx.lineWidth = 7 * scale;
+            ctx.beginPath();
+            ctx.moveTo(equipment.x - 6 * scale, equipment.y - 24 * scale);
+            ctx.lineTo(equipment.x + 12 * scale, equipment.y + 22 * scale);
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+
+        // High-detail Anatomical Muscle & Fiber Renderer (White/Silver muscle bellies + Deep Red active target group)
+        const drawAnatomicalSegment = (p1, p2, rStart, rEnd, isRed, isOutfit, isBackSide) => {
+          const dx = p2.x - p1.x;
+          const dy = p2.y - p1.y;
+          const len = Math.hypot(dx, dy);
+          if (len < 1) return;
+          const ang = Math.atan2(dy, dx);
+
+          ctx.save();
+          ctx.translate(p1.x, p1.y);
+          ctx.rotate(ang);
+
+          const w1 = rStart * scale;
+          const w2 = rEnd * scale;
+          const midW = Math.max(w1, w2) * 1.22;
+
+          ctx.beginPath();
+          ctx.moveTo(0, -w1 * 0.72);
+          ctx.bezierCurveTo(len * 0.34, -midW, len * 0.72, -midW * 0.90, len, -w2 * 0.75);
+          ctx.arc(len, 0, w2 * 0.75, -Math.PI / 2, Math.PI / 2);
+          ctx.bezierCurveTo(len * 0.72, midW * 0.90, len * 0.34, midW, 0, w1 * 0.72);
+          ctx.arc(0, 0, w1 * 0.72, Math.PI / 2, -Math.PI / 2);
+          ctx.closePath();
+
+          const g = ctx.createLinearGradient(0, -midW, 0, midW);
+          if (isOutfit) {
+            g.addColorStop(0, '#3f3f46');
+            g.addColorStop(0.28, '#18181b');
+            g.addColorStop(0.75, '#09090b');
+            g.addColorStop(1, '#27272a');
+          } else if (isRed) {
+            const pAlpha = 0.85 + 0.15 * pulse;
+            g.addColorStop(0, `rgba(252, 165, 165, ${pAlpha})`);
+            g.addColorStop(0.25, `rgba(220, 38, 38, ${pAlpha})`);
+            g.addColorStop(0.70, `rgba(153, 27, 27, ${pAlpha})`);
+            g.addColorStop(1, `rgba(95, 15, 15, ${pAlpha})`);
+          } else if (isBackSide) {
+            g.addColorStop(0, '#d4d4d8');
+            g.addColorStop(0.45, '#9ca3af');
+            g.addColorStop(1, '#52525b');
+          } else {
+            g.addColorStop(0, '#ffffff');
+            g.addColorStop(0.32, '#e4e4e7');
+            g.addColorStop(0.72, '#a1a1aa');
+            g.addColorStop(1, '#52525b');
+          }
+
+          ctx.fillStyle = g;
+          ctx.fill();
+
+          // Anatomical muscle fiber striations
+          if (!isOutfit && len > 12 * scale) {
+            ctx.strokeStyle = isRed ? 'rgba(100, 10, 10, 0.45)' : 'rgba(39, 39, 42, 0.32)';
+            ctx.lineWidth = 1.05 * scale;
+            [-0.42, -0.14, 0.14, 0.42].forEach(offset => {
+              ctx.beginPath();
+              ctx.moveTo(len * 0.14, midW * offset * 0.68);
+              ctx.quadraticCurveTo(len * 0.5, midW * offset * 1.06, len * 0.86, midW * offset * 0.68);
+              ctx.stroke();
+            });
+          }
+
+          // Crisp ink contour line like anatomical fitness charts
+          ctx.strokeStyle = isRed ? '#7f1d1d' : '#18181b';
+          ctx.lineWidth = 1.25 * scale;
+          ctx.stroke();
+
+          ctx.restore();
+        };
+
+        const drawFootAndHand = (pt, isHand) => {
+          ctx.save();
+          ctx.fillStyle = '#e4e4e7';
+          ctx.strokeStyle = '#18181b';
+          ctx.lineWidth = 1.2 * scale;
+          ctx.beginPath();
+          if (isHand) {
+            ctx.arc(pt.x, pt.y, 4.2 * scale, 0, Math.PI * 2);
+          } else {
+            ctx.roundRect(pt.x - 4 * scale, pt.y - 2.5 * scale, 18 * scale, 6.5 * scale, 3 * scale);
+          }
+          ctx.fill(); ctx.stroke();
+          ctx.restore();
+        };
+
+        // 1. Far-side limbs (drawn behind torso for 3/4 isometric realism)
+        if (knee2 && ankle2) {
+          const thighRed2 = hasBilateral2 && (activeMuscles.quads || activeMuscles.hams || activeMuscles.glutes);
+          drawAnatomicalSegment(hip, knee2, isFemale ? 9.8 : 10.8, 6.5, thighRed2, false, true);
+          const midT2 = { x: hip.x + (knee2.x - hip.x) * 0.34, y: hip.y + (knee2.y - hip.y) * 0.34 };
+          drawAnatomicalSegment(hip, midT2, isFemale ? 10.4 : 11.4, isFemale ? 9.2 : 10.0, false, true, true);
+          drawAnatomicalSegment(knee2, ankle2, 6.4, 3.8, hasBilateral2 && activeMuscles.calves, false, true);
+          drawFootAndHand(ankle2, false);
+        }
+        if (elbow2 && hand2) {
+          const armRed2 = hasBilateral2 && (activeMuscles.biceps || activeMuscles.triceps || activeMuscles.shoulders);
+          drawAnatomicalSegment(shoulder, elbow2, isFemale ? 5.8 : 7.4, isFemale ? 4.6 : 5.8, armRed2, false, true);
+          drawAnatomicalSegment(elbow2, hand2, isFemale ? 4.4 : 5.2, 3.0, hasBilateral2 && activeMuscles.biceps, false, true);
+          drawFootAndHand(hand2, true);
+        }
+
+        // 2. Near-side Leg (Thigh + Black Shorts + Calf + Foot)
+        const thighIsRed = activeMuscles.quads || activeMuscles.hams || activeMuscles.glutes;
+        drawAnatomicalSegment(hip, knee, isFemale ? 10.8 : 11.8, 7.2, thighIsRed, false, false);
+        const midThigh = { x: hip.x + (knee.x - hip.x) * 0.35, y: hip.y + (knee.y - hip.y) * 0.35 };
+        drawAnatomicalSegment(hip, midThigh, isFemale ? 11.5 : 12.5, isFemale ? 10.0 : 10.8, false, true, false);
+        drawAnatomicalSegment(knee, ankle, 7.2, 4.1, activeMuscles.calves, false, false);
+        drawFootAndHand(ankle, false);
+
+        // 3. Sculpted Torso (Pelvis -> 6-Pack Abs -> Ribcage/Chest -> Black Sports Bra for Female)
+        const midTorso = { x: hip.x + (shoulder.x - hip.x) * 0.48, y: hip.y + (shoulder.y - hip.y) * 0.48 };
+        drawAnatomicalSegment(hip, midTorso, isFemale ? 10.6 : 11.8, isFemale ? 9.2 : 11.4, activeMuscles.abs || activeMuscles.glutes, false, false);
+        drawAnatomicalSegment(midTorso, shoulder, isFemale ? 9.5 : 11.6, isFemale ? 12.2 : 14.8, activeMuscles.chest || activeMuscles.back, false, false);
+
+        // Defined abdominal 6-pack blocks
+        ctx.save();
+        const torsoAng = Math.atan2(shoulder.y - hip.y, shoulder.x - hip.x);
+        ctx.translate(midTorso.x + 2 * scale, midTorso.y + 3 * scale);
+        ctx.rotate(torsoAng + Math.PI / 2);
+        for (let row = -1; row <= 1; row++) {
+          ctx.fillStyle = activeMuscles.abs ? `rgba(220, 38, 38, ${0.82 + 0.18 * pulse})` : 'rgba(113, 113, 122, 0.38)';
+          ctx.strokeStyle = '#18181b';
+          ctx.lineWidth = 0.8 * scale;
+          ctx.beginPath();
+          ctx.roundRect(-4.2 * scale, row * 5.2 * scale - 2 * scale, 3.6 * scale, 4.2 * scale, 1.5 * scale);
+          ctx.roundRect(0.6 * scale, row * 5.2 * scale - 2 * scale, 3.6 * scale, 4.2 * scale, 1.5 * scale);
+          ctx.fill(); ctx.stroke();
+        }
+        ctx.restore();
+
+        // Female black sports bra
+        if (isFemale) {
+          const chestBand1 = { x: hip.x + (shoulder.x - hip.x) * 0.62, y: hip.y + (shoulder.y - hip.y) * 0.62 };
+          const chestBand2 = { x: hip.x + (shoulder.x - hip.x) * 0.88, y: hip.y + (shoulder.y - hip.y) * 0.88 };
+          drawAnatomicalSegment(chestBand1, chestBand2, 11.2, 12.4, false, true, false);
+        }
+
+        // 4. Neck & Anatomical Head (Ponytail for Female / Short Hair for Male)
+        drawAnatomicalSegment(shoulder, head, 5.2, 4.6, false, false, false);
+        ctx.save();
+        const headGrad = ctx.createRadialGradient(head.x - 3 * scale, head.y - 4 * scale, 2, head.x, head.y, 12 * scale);
+        headGrad.addColorStop(0, '#ffffff');
+        headGrad.addColorStop(0.6, '#d4d4d8');
+        headGrad.addColorStop(1, '#71717a');
+        ctx.fillStyle = headGrad;
+        ctx.beginPath();
+        ctx.arc(head.x, head.y, 11.2 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#18181b';
+        ctx.lineWidth = 1.25 * scale;
+        ctx.stroke();
+
+        // Hair + Ponytail
+        ctx.fillStyle = '#18181b';
+        ctx.beginPath();
+        ctx.arc(head.x - 1.5 * scale, head.y - 2 * scale, 11.2 * scale, Math.PI * 0.82, Math.PI * 2.02);
+        ctx.fill();
+        if (isFemale) {
+          ctx.beginPath();
+          ctx.ellipse(head.x - 14.5 * scale, head.y - 2 * scale, 7.5 * scale, 4.2 * scale, -0.35, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        // 5. Near-side Arm (Deltoid Cap + Biceps/Triceps + Forearm + Hand)
+        const armIsRed = activeMuscles.biceps || activeMuscles.triceps || activeMuscles.shoulders;
+        drawAnatomicalSegment(shoulder, elbow, isFemale ? 6.6 : 8.4, isFemale ? 5.2 : 6.6, armIsRed, false, false);
+        drawAnatomicalSegment(elbow, hand, isFemale ? 4.8 : 5.6, 3.2, activeMuscles.biceps, false, false);
+        drawFootAndHand(hand, true);
+
+        if (activeMuscles.shoulders) {
+          ctx.save();
+          ctx.fillStyle = `rgba(220, 38, 38, ${0.85 + 0.15 * pulse})`;
+          ctx.strokeStyle = '#7f1d1d';
+          ctx.lineWidth = 1.2 * scale;
+          ctx.beginPath();
+          ctx.arc(shoulder.x, shoulder.y, (isFemale ? 7.2 : 8.8) * scale, 0, Math.PI * 2);
+          ctx.fill(); ctx.stroke();
+          ctx.restore();
+        }
+
+        // 6. Bold white outlined "4x12 Rep" stamp at bottom-right just like the reference image!
+        const repsEl = document.getElementById('mannequin-reps-badge');
+        const repsLabel = (repsEl && repsEl.textContent) ? repsEl.textContent : '4x12 Rep';
+        ctx.save();
+        ctx.font = `900 ${Math.round(18 * scale)}px "Oswald", sans-serif`;
+        ctx.textAlign = 'right';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 4.5 * scale;
+        ctx.strokeStyle = '#09090b';
+        ctx.strokeText(repsLabel, w - 14 * scale, floorY - 4 * scale);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(repsLabel, w - 14 * scale, floorY - 4 * scale);
+        ctx.restore();
+      }
+
+      function startMannequinLoop(animType) {
+        stopMannequinLoop();
+        activeMannequinAnim = animType || 'squat';
+        const canvas = document.getElementById('mannequin-canvas');
+        if (!canvas) return;
+        const startTs = performance.now();
+        const tick = (now) => {
+          const rect = canvas.getBoundingClientRect();
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          if (rect.width > 0 && rect.height > 0) {
+            if (canvas.width !== Math.round(rect.width * dpr) || canvas.height !== Math.round(rect.height * dpr)) {
+              canvas.width = Math.round(rect.width * dpr);
+              canvas.height = Math.round(rect.height * dpr);
+            }
+            const ctx = canvas.getContext('2d');
+            ctx.save();
+            ctx.scale(dpr, dpr);
+            const elapsed = ((now - startTs) / 1000) * mannequinSpeed;
+            drawMannequinFrame(ctx, rect.width, rect.height, activeMannequinAnim, elapsed);
+            ctx.restore();
+          }
+          mannequinRafId = requestAnimationFrame(tick);
+        };
+        mannequinRafId = requestAnimationFrame(tick);
+      }
+
+      function stopMannequinLoop() {
+        if (mannequinRafId) {
+          cancelAnimationFrame(mannequinRafId);
+          mannequinRafId = null;
+        }
+      }
+
+      function openExerciseVideoModal(dayKey, lineIdx, rawLine) {
+        const st = getActive();
+        mannequinGender = (st.sexo === 'F') ? 'F' : 'M';
+        const genderBtn = document.getElementById('btn-mannequin-gender');
+        if (genderBtn) genderBtn.textContent = 'Modelo: ' + (mannequinGender === 'F' ? 'Fem' : 'Masc');
+
+        const repsBadge = document.getElementById('mannequin-reps-badge');
+        if (repsBadge) repsBadge.textContent = extractRepsBadge(rawLine);
+
+        const videosMap = (st.treino && st.treino.videos) || {};
+        const mapKey = `${dayKey}_${lineIdx}`;
+        const customUrl = videosMap[mapKey] || '';
+        const info = findExerciseVideoInfo(rawLine, customUrl);
+        currentVideoContext = { dayKey, lineIdx, mapKey, rawLine };
+
+        const modal = document.getElementById('modal-exercise-video');
+        const titleEl = document.getElementById('video-modal-title');
+        const canvas = document.getElementById('mannequin-canvas');
+        const hud = document.getElementById('mannequin-hud');
+        const nativeVid = document.getElementById('video-modal-native');
+        const cuesEl = document.getElementById('video-modal-cues');
+        const adminEdit = document.getElementById('video-modal-admin-edit');
+        const customInp = document.getElementById('inp-custom-video-url');
+
+        titleEl.textContent = info.title;
+        cuesEl.innerHTML = `<strong class="text-limefit uppercase">Dica de Execução:</strong> ${info.cue}`;
+        document.getElementById('mannequin-muscle-tag').textContent = info.muscle;
+        document.getElementById('video-modal-yt-link').href = info.ytUrl;
+
+        nativeVid.classList.add('hidden');
+        nativeVid.pause();
+        nativeVid.src = '';
+        canvas.classList.remove('hidden');
+        if (hud) hud.classList.remove('hidden');
+
+        if (info.type === 'native') {
+          stopMannequinLoop();
+          canvas.classList.add('hidden');
+          if (hud) hud.classList.add('hidden');
+          nativeVid.src = info.url;
+          nativeVid.classList.remove('hidden');
+          nativeVid.play().catch(() => {});
+        } else {
+          startMannequinLoop(info.anim);
+        }
+
+        if (adminEdit) {
+          if (isStudentMode) {
+            adminEdit.classList.add('hidden');
+          } else {
+            adminEdit.classList.remove('hidden');
+            if (customInp) customInp.value = customUrl;
+          }
+        }
+
+        modal.classList.remove('hidden');
+      }
+
+      function closeExerciseVideoModal() {
+        stopMannequinLoop();
+        const modal = document.getElementById('modal-exercise-video');
+        const nativeVid = document.getElementById('video-modal-native');
+        if (nativeVid) { nativeVid.pause(); nativeVid.src = ''; }
+        if (modal) modal.classList.add('hidden');
+        currentVideoContext = null;
+      }
+
+      function buildExerciseVideoCardsHTML(dayKey, exerciciosText, videosMap) {
+        const lines = (exerciciosText || '').split('\n').map(l => l.trim()).filter(Boolean);
+        if (!lines.length) {
+          return '<div class="text-xs text-gray-500 italic py-1">Nenhum exercício cadastrado para este dia.</div>';
+        }
+        return lines.map((line, idx) => {
+          const hasCustom = Boolean(videosMap && videosMap[`${dayKey}_${idx}`]);
+          return `
+            <button type="button" data-play-ex-day="${dayKey}" data-play-ex-idx="${idx}" class="w-full group flex items-center justify-between gap-3 bg-charcoal hover:bg-panel border border-borderdark hover:border-limefit/60 rounded-lg px-3 py-2.5 text-left transition">
+              <div class="flex items-start gap-2.5 min-w-0">
+                <span class="mt-0.5 w-7 h-7 rounded-lg bg-limefit/15 group-hover:bg-limefit text-limefit group-hover:text-black border border-limefit/40 flex items-center justify-center shrink-0 transition">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+                <div class="min-w-0">
+                  <div class="text-xs sm:text-sm font-bold text-white group-hover:text-limefit transition leading-snug">${line.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                  <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-0.5 flex items-center gap-1.5">
+                    <span class="text-limefit">▶ Toque para ver simulação da execução</span>
+                    ${hasCustom ? '<span class="px-1.5 py-0.2 rounded bg-limefit/15 text-limefit border border-limefit/30">Link Personalizado</span>' : ''}
+                  </div>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-gray-500 group-hover:text-limefit shrink-0 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </button>
+          `;
+        }).join('');
+      }
+
       function renderTreinoDays(s) {
         const container = document.getElementById('treino-days-list');
         if (!container) return;
         const dias = (s.treino && s.treino.dias) || {};
+        const videosMap = (s.treino && s.treino.videos) || {};
         container.innerHTML = '';
         TREINO_DAYS.forEach(d => {
           const entry = dias[d.key] || { foco: '', exercicios: '' };
           const lineCount = Math.max(4, (entry.exercicios || '').split('\n').length + 1);
+          const cardsHtml = buildExerciseVideoCardsHTML(d.key, entry.exercicios || '', videosMap);
           const box = document.createElement('div');
           box.className = 'bg-charcoal border border-borderdark rounded-lg overflow-hidden';
           box.innerHTML = `
@@ -1142,9 +2019,16 @@
                 <label class="block text-[11px] font-bold uppercase tracking-wider text-limefit mb-1">Foco / Grupo Muscular</label>
                 <input type="text" data-day-field="foco" data-day-key="${d.key}" value="${(entry.foco || '').replace(/"/g, '&quot;')}" placeholder="Ex: Peito, Ombro e Tríceps (ou Descanso)" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-xs sm:text-sm font-bold text-limefit focus:border-limefit focus:outline-none" ${isStudentMode ? 'disabled' : ''} />
               </div>
-              <div>
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-300 mb-1">Exercícios, Séries, Repetições &amp; Cargas</label>
-                <textarea rows="${lineCount}" data-day-field="exercicios" data-day-key="${d.key}" placeholder="Ex: Supino reto 4x10 • Desenvolvimento 3x12 • Tríceps corda 3x15..." class="w-full bg-panel border border-borderdark rounded-md px-3.5 py-2.5 text-xs sm:text-sm font-medium leading-loose tracking-wide text-gray-100 focus:border-limefit focus:outline-none overflow-hidden resize-none" ${isStudentMode ? 'disabled' : ''}>${entry.exercicios || ''}</textarea>
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label class="block text-[11px] font-bold uppercase tracking-wider text-limefit">Exercícios &amp; Vídeo de Execução (Toque no exercício)</label>
+                  <span class="text-[10px] text-gray-400">▶ Simulador 3D/2D</span>
+                </div>
+                <div id="day-cards-${d.key}" class="space-y-2">${cardsHtml}</div>
+              </div>
+              <div class="${isStudentMode ? 'hidden' : ''}">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-300 mb-1">Editar Lista de Exercícios (1 exercício por linha)</label>
+                <textarea rows="${lineCount}" data-day-field="exercicios" data-day-key="${d.key}" placeholder="Ex: Supino reto 4x10 • Desenvolvimento 3x12 • Tríceps corda 3x15..." class="w-full bg-panel border border-borderdark rounded-md px-3.5 py-2.5 text-xs sm:text-sm font-medium leading-loose tracking-wide text-gray-100 focus:border-limefit focus:outline-none overflow-hidden resize-none">${entry.exercicios || ''}</textarea>
               </div>
             </div>
           `;
@@ -1517,6 +2401,17 @@
             saveStorage();
           });
         } document.getElementById('treino-days-list').addEventListener('click', e => {
+          const playBtn = e.target.closest('[data-play-ex-day]');
+          if (playBtn) {
+            const dKey = playBtn.getAttribute('data-play-ex-day');
+            const exIdx = parseInt(playBtn.getAttribute('data-play-ex-idx'), 10);
+            const st = getActive();
+            const txt = (st.treino && st.treino.dias && st.treino.dias[dKey] && st.treino.dias[dKey].exercicios) || '';
+            const lines = txt.split('\n').map(l => l.trim()).filter(Boolean);
+            const line = lines[exIdx] || '';
+            if (line) openExerciseVideoModal(dKey, exIdx, line);
+            return;
+          }
           const btn = e.target.closest('[data-day-toggle]');
           if (!btn) return;
           const k = btn.getAttribute('data-day-toggle');
@@ -1539,6 +2434,10 @@
           st.treino.dias = st.treino.dias || {};
           st.treino.dias[key] = st.treino.dias[key] || { foco: '', exercicios: '' };
           st.treino.dias[key][field] = inp.value;
+          if (field === 'exercicios') {
+            const cardsEl = document.getElementById('day-cards-' + key);
+            if (cardsEl) cardsEl.innerHTML = buildExerciseVideoCardsHTML(key, inp.value, st.treino.videos || {});
+          }
           const prev = document.querySelector(`[data-day-preview="${key}"]`);
           if (prev) {
             const dObj = st.treino.dias[key];
@@ -1546,6 +2445,51 @@
           }
           saveStorage();
         });
+
+        const btnCloseVid = document.getElementById('btn-close-video-modal');
+        if (btnCloseVid) btnCloseVid.addEventListener('click', closeExerciseVideoModal);
+        const btnGender = document.getElementById('btn-mannequin-gender');
+        if (btnGender) {
+          btnGender.addEventListener('click', () => {
+            mannequinGender = mannequinGender === 'M' ? 'F' : 'M';
+            btnGender.textContent = 'Modelo: ' + (mannequinGender === 'F' ? 'Fem' : 'Masc');
+          });
+        }
+        const btnSpeed = document.getElementById('btn-mannequin-speed');
+        if (btnSpeed) {
+          btnSpeed.addEventListener('click', () => {
+            mannequinSpeed = mannequinSpeed === 1 ? 0.6 : (mannequinSpeed === 0.6 ? 1.4 : 1);
+            const label = mannequinSpeed === 0.6 ? '0.6x (Lento)' : (mannequinSpeed === 1.4 ? '1.4x (Rápido)' : '1x');
+            btnSpeed.textContent = 'Vel: ' + label;
+          });
+        }
+        const vidModalEl = document.getElementById('modal-exercise-video');
+        if (vidModalEl) {
+          vidModalEl.addEventListener('click', e => {
+            if (e.target === vidModalEl) closeExerciseVideoModal();
+          });
+        }
+        const btnSaveCustomVid = document.getElementById('btn-save-custom-video');
+        if (btnSaveCustomVid) {
+          btnSaveCustomVid.addEventListener('click', () => {
+            if (isStudentMode || !currentVideoContext) return;
+            const st = getActive();
+            st.treino = st.treino || {};
+            st.treino.videos = st.treino.videos || {};
+            const val = (document.getElementById('inp-custom-video-url').value || '').trim();
+            if (val) {
+              st.treino.videos[currentVideoContext.mapKey] = val;
+            } else {
+              delete st.treino.videos[currentVideoContext.mapKey];
+            }
+            saveStorage();
+            const cardsEl = document.getElementById('day-cards-' + currentVideoContext.dayKey);
+            const dayTxt = (st.treino.dias && st.treino.dias[currentVideoContext.dayKey] && st.treino.dias[currentVideoContext.dayKey].exercicios) || '';
+            if (cardsEl) cardsEl.innerHTML = buildExerciseVideoCardsHTML(currentVideoContext.dayKey, dayTxt, st.treino.videos);
+            openExerciseVideoModal(currentVideoContext.dayKey, currentVideoContext.lineIdx, currentVideoContext.rawLine);
+            showToast('Link de vídeo atualizado!');
+          });
+        }
                                 
         document.getElementById('students-quick-list').addEventListener('click', e => {
           const selBtn = e.target.closest('[data-select-id]');
