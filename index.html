@@ -572,6 +572,19 @@
 
   <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-limefit text-black font-bold text-sm px-4 py-3 rounded-lg shadow-2xl"></div>
 
+  <!-- Modal Acesso Personal (Desbloquear Modo Aluno) -->
+  <div id="modal-personal-pin" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-charcoal border border-borderdark rounded-xl max-w-xs w-full p-5 space-y-3">
+      <h3 class="font-display text-lg uppercase text-white">Acesso Personal</h3>
+      <p class="text-xs text-gray-400">Digite o PIN do Personal para liberar a edição neste aparelho.</p>
+      <input id="inp-personal-pin" type="password" inputmode="numeric" placeholder="PIN (padrão: 2026)" class="w-full bg-panel border border-borderdark rounded-md px-3 py-2 text-sm text-white focus:border-limefit focus:outline-none" />
+      <div class="flex justify-end gap-2">
+        <button id="btn-cancel-pin" type="button" class="px-3 py-1.5 rounded-md bg-panel text-gray-300 text-xs font-semibold">Cancelar</button>
+        <button id="btn-confirm-pin" type="button" class="px-3 py-1.5 rounded-md bg-limefit text-black text-xs font-bold">Entrar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Confirmar Exclusão -->
   <div id="modal-delete-student" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-charcoal border border-borderdark rounded-xl max-w-sm w-full p-5 space-y-4">
@@ -622,8 +635,16 @@
       };
 
       let db = null;
+      const STUDENT_LOCK_KEY = 'apexfit_student_lock_id';
+      const PERSONAL_PIN = '2026';
       const urlParams = new URLSearchParams(window.location.search);
-      const studentViewId = urlParams.get('aluno');
+      const urlAluno = urlParams.get('aluno');
+      if (urlAluno) {
+        try { localStorage.setItem(STUDENT_LOCK_KEY, urlAluno); } catch (e) {}
+      }
+      let lockedAluno = null;
+      try { lockedAluno = localStorage.getItem(STUDENT_LOCK_KEY); } catch (e) {}
+      const studentViewId = urlAluno || lockedAluno;
       const isStudentMode = Boolean(studentViewId);
 
       try {
@@ -991,6 +1012,18 @@
           }
         });
 
+        document.getElementById('btn-cancel-pin').addEventListener('click', () => {
+          document.getElementById('modal-personal-pin').classList.add('hidden');
+        });
+        document.getElementById('btn-confirm-pin').addEventListener('click', () => {
+          const pin = document.getElementById('inp-personal-pin').value.trim();
+          if (pin === PERSONAL_PIN) {
+            try { localStorage.removeItem(STUDENT_LOCK_KEY); } catch (e) {}
+            window.location.href = window.location.href.split('?')[0];
+          } else {
+            showToast('PIN incorreto.');
+          }
+        });
         document.getElementById('btn-cancel-delete').addEventListener('click', () => {
           pendingDeleteId = null;
           document.getElementById('modal-delete-student').classList.add('hidden');
@@ -1152,7 +1185,12 @@
         document.getElementById('parq-list').style.pointerEvents = 'none';
         document.getElementById('postural-grid').style.pointerEvents = 'none';
         const modCount = document.querySelector('#menu-header-bar .text-limefit');
-        if (modCount) modCount.textContent = 'Modo Aluno';
+        if (modCount) {
+          modCount.innerHTML = 'Modo Aluno <button id="btn-unlock-personal" type="button" class="ml-2 underline text-gray-400 hover:text-white text-[10px]">Personal</button>';
+          document.getElementById('btn-unlock-personal').addEventListener('click', () => {
+            document.getElementById('modal-personal-pin').classList.remove('hidden');
+          });
+        }
       }
 
       if (db) {
