@@ -1323,7 +1323,7 @@
             const btn = block.querySelector('.acc-toggle');
             const body = block.querySelector('.acc-body');
             const id = btn.getAttribute('data-acc');
-            if (isStudentMode && id === 'acc-alunos') {
+            if (isStudentMode && (id === 'acc-alunos' || id === 'acc-questionario')) {
               block.classList.add('hidden');
             } else {
               block.classList.remove('hidden');
@@ -1344,7 +1344,7 @@
 
         document.getElementById('btn-next-menu').addEventListener('click', () => {
           if (!currentMenuId) return;
-          const visibleOrder = isStudentMode ? menuOrder.filter(x => x !== 'acc-alunos') : menuOrder;
+          const visibleOrder = isStudentMode ? menuOrder.filter(x => x !== 'acc-alunos' && x !== 'acc-questionario') : menuOrder;
           const idx = visibleOrder.indexOf(currentMenuId);
           const nextId = visibleOrder[(idx + 1) % visibleOrder.length];
           openMenuSection(nextId);
@@ -1408,6 +1408,7 @@
         const loginScreen = document.getElementById('login-screen');
         const btnLogout = document.getElementById('btn-logout');
         const alunosBlock = document.querySelector('[data-acc="acc-alunos"]')?.closest('.acc-block');
+        const questBlock = document.querySelector('[data-acc="acc-questionario"]')?.closest('.acc-block');
         const saveBtn = document.getElementById('btn-save-assessment');
         const modCount = document.querySelector('#menu-header-bar .text-limefit');
 
@@ -1424,6 +1425,7 @@
         if (isStudentMode) {
           activeId = studentViewId;
           if (alunosBlock) alunosBlock.classList.add('hidden');
+          if (questBlock) questBlock.classList.add('hidden');
           if (saveBtn) saveBtn.classList.add('hidden');
           document.querySelectorAll('main input, main select, main textarea').forEach(el => {
             el.disabled = true;
@@ -1434,6 +1436,7 @@
           populateForm(getActive());
         } else {
           if (alunosBlock) alunosBlock.classList.remove('hidden');
+          if (questBlock) questBlock.classList.remove('hidden');
           if (saveBtn) saveBtn.classList.remove('hidden');
           document.querySelectorAll('main input, main select, main textarea').forEach(el => {
             el.disabled = false;
